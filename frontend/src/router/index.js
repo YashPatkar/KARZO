@@ -29,6 +29,11 @@ const routes = [
     name: 'DriverPayment',
     component: () => import('../pages/Driver/Features/payment.vue'),
   },
+  {
+    path: '/Driver/Features/eventUploader',
+    name: 'DriverEventUploader',
+    component: () => import('../pages/Driver/Features/eventUploader.vue'),
+  },
   // Authentication Routes
   {
     path: '/',
