@@ -1,14 +1,35 @@
 <script setup>
 import { ref } from 'vue'
-const props = defineProps(['items'])
 const drawer = ref(true)
-const item = ref(props.items)
+const items = ref([
+    {
+        title: 'Home',
+        prependIcon: 'mdi-home',
+        to: { name: 'DriverHome' },
+    },
+    {
+        title: 'Dashboard',
+        prependIcon: 'mdi-view-dashboard-outline',
+        to: { name: 'DriverHome' },
+    },
+    {
+        title: 'Events',
+        prependIcon: 'mdi-account-group',
+        to: { name: 'DriverEvent' },
+    },
+    {
+        title: 'Events Uploader',
+        prependIcon: 'mdi-briefcase-outline',
+        to: { name: 'DriverEventUpload' },
+    },
+])
 </script>
 
 <template>
     <v-layout>
         <v-navigation-drawer v-model="drawer">
-            <v-list density="compact" item-props :items="items" nav />
+            <v-list-item class="ma-1" density="compact" v-for="(item, index) in items" :key="index" :to="item.to"
+                :title="item.title" :prepend-icon="item.prependIcon" nav />
             <template #append>
                 <v-list-item class="ma-2" link nav prepend-icon="mdi-cog-outline" title="Settings" />
             </template>
@@ -35,9 +56,7 @@ const item = ref(props.items)
         </v-app-bar>
 
         <v-main>
-            <div class="pa-4">
-                
-            </div>
+            <slot></slot>
         </v-main>
     </v-layout>
 </template>
