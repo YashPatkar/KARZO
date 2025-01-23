@@ -6,7 +6,7 @@ import { useEventStore } from '@/stores/Driver/eventStore';
 const eventStore = useEventStore();
 
 const handleData = (data) => {
-    if (!data.title || !data.date || !data.time || !data.location || !data.description) {
+    if (!data.name || !data.date || !data.time || !data.location || !data.description) {
         alert('Please fill all the fields')
         return
     }

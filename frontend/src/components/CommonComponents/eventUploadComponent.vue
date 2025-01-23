@@ -1,8 +1,10 @@
 <script setup>
 import { ref, defineEmits } from 'vue'
+import { v4 as uuid } from 'uuid';
 
 const eventForm = ref({
-    title: '',
+    id: uuid(),
+    name: '',
     date: '',
     time: '',
     location: '',
@@ -14,7 +16,7 @@ const emit = defineEmits(['submit-event'])
 const submitEvent = () => {
     // Simulate API call
     setTimeout(() => {
-        if (!eventForm.value.title || !eventForm.value.date || !eventForm.value.time || !eventForm.value.location || !eventForm.value.description) {
+        if (!eventForm.value.name || !eventForm.value.date || !eventForm.value.time || !eventForm.value.location || !eventForm.value.description) {
             alert('Please fill all the fields')
             return
         }
@@ -24,7 +26,8 @@ const submitEvent = () => {
         }
         // Reset form
         eventForm.value = {
-            title: '',
+            id: uuid(),
+            name: '',
             date: '',
             time: '',
             location: '',
@@ -41,7 +44,7 @@ const submitEvent = () => {
         <v-card>
             <v-card-text>
                 <v-form @submit.prevent="submitEvent">
-                    <v-text-field v-model="eventForm.title" label="Event Title" required></v-text-field>
+                    <v-text-field v-model="eventForm.name" label="Event name" required></v-text-field>
 
                     <v-row>
                         <v-col cols="12" md="6">
