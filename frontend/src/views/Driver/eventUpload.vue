@@ -2,9 +2,19 @@
 import ApplicationLayoutComponent from '@/components/Driver/applicationLayoutComponent.vue';
 import eventUploadComponent from '@/components/CommonComponents/eventUploadComponent.vue';
 import { useEventStore } from '@/stores/Driver/eventStore';
+import axios from 'axios';
 
-const eventStore = useEventStore();
 console.log(eventStore.events);
+const sendtodatabase = (data) => {
+    axios.post('http://localhost:8000/api/events', data)
+    .then((response) => {
+        console.log(response);
+
+    })
+    .catch((error) => {
+        console.log(error);
+    });
+}
 const handleData = (data) => {
     if (!data.name || !data.date || !data.time || !data.location || !data.description || !data.id) {
         alert('Please fill all the fields')
@@ -13,7 +23,7 @@ const handleData = (data) => {
     else{
         // Send it to the backend and sent it to event page too
         // store it in the event store
-        eventStore.addEvent(data);
+        sendtodatabase(data);
         alert('Event submitted successfully!');
     }
 }
