@@ -15,7 +15,7 @@ const sendtodatabase = async (data) => {
     }
 }
 const handleData = (data) => {
-    if(data.name && data.date && data.time && data.location && data.description && data.id){
+    if(data.name && data.date && data.time && data.location && data.description){
         // Send it to the backend
         sendtodatabase(data);
     }
