@@ -1,9 +1,7 @@
 <script setup>
 import { ref, defineEmits } from 'vue'
-import { v4 as uuid } from 'uuid';
 
 const eventForm = ref({
-    id: uuid(),
     name: '',
     date: '',
     time: '',
@@ -11,6 +9,7 @@ const eventForm = ref({
     description: ''
 })
 
+// Sending this to the parent component( eventUpload.vue )
 const emit = defineEmits(['submit-event'])
 
 const submitEvent = () => {
@@ -26,7 +25,6 @@ const submitEvent = () => {
         }
         // Reset form
         eventForm.value = {
-            id: uuid(),
             name: '',
             date: '',
             time: '',

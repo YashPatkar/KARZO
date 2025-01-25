@@ -1,30 +1,26 @@
 <script setup>
 import ApplicationLayoutComponent from '@/components/Driver/applicationLayoutComponent.vue';
 import eventUploadComponent from '@/components/CommonComponents/eventUploadComponent.vue';
-import { useEventStore } from '@/stores/Driver/eventStore';
-import axios from 'axios';
+import { driverApiClient } from '@/utils/apiClients';
 
-console.log(eventStore.events);
-const sendtodatabase = (data) => {
-    axios.post('http://localhost:8000/api/events', data)
-    .then((response) => {
-        console.log(response);
-
-    })
-    .catch((error) => {
+const sendtodatabase = async (data) => {
+    try{
+        const response = await driverApiClient.post('/event/data-store/', data);
+        console.log('Event Data send to the backend');
+        alert('Event submitted successfully!');
+    }
+    catch (error){
         console.log(error);
-    });
+        alert('Error in submitting the event');
+    }
 }
 const handleData = (data) => {
-    if (!data.name || !data.date || !data.time || !data.location || !data.description || !data.id) {
-        alert('Please fill all the fields')
-        return
+    if(data.name && data.date && data.time && data.location && data.description && data.id){
+        // Send it to the backend
+        sendtodatabase(data);
     }
     else{
-        // Send it to the backend and sent it to event page too
-        // store it in the event store
-        sendtodatabase(data);
-        alert('Event submitted successfully!');
+        alert('Error in submitting the event');
     }
 }
 </script>
