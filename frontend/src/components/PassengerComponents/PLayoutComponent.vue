@@ -1,26 +1,26 @@
-<script setup>
+<!-- <script setup>
 import { ref } from 'vue'
 const drawer = ref(true)
 const items = ref([
     {
         title: 'Home',
         prependIcon: 'mdi-home',
-        to: { name: 'DriverHome' },
+        to: { name: 'PassengerHome' },
     },
     {
         title: 'Dashboard',
         prependIcon: 'mdi-view-dashboard-outline',
-        to: { name: 'DriverHome' },
+        to: { name: 'PassengerHome' },
     },
     {
         title: 'Events',
         prependIcon: 'mdi-account-group',
-        to: { name: 'DriverEvent' },
+        to: { name: 'PassengerEvent' },
     },
     {
         title: 'Events Uploader',
         prependIcon: 'mdi-briefcase-outline',
-        to: { name: 'DriverEventUpload' },
+        to: { name: 'PassengerEventUpload' },
     },
 ])
 </script>
@@ -59,4 +59,4 @@ const items = ref([
             <slot></slot>
         </v-main>
     </v-layout>
-</template>
+</template> -->

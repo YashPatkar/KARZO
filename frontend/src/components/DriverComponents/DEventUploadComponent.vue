@@ -9,17 +9,19 @@ const eventForm = ref({
     description: ''
 })
 
-// Sending this to the parent component( eventUpload.vue )
 const emit = defineEmits(['submit-event'])
+
+const loading = ref(false)
 
 const submitEvent = () => {
     // Simulate API call
+    loading.value = true
     setTimeout(() => {
         if (!eventForm.value.name || !eventForm.value.date || !eventForm.value.time || !eventForm.value.location || !eventForm.value.description) {
             alert('Please fill all the fields')
+            loading.value = false
             return
-        }
-        else{
+        } else {
             // Emit event with form data
             emit('submit-event', { ...eventForm.value })
         }
@@ -31,6 +33,7 @@ const submitEvent = () => {
             location: '',
             description: ''
         }
+        loading.value = false
     }, 1000)
 }
 </script>
@@ -38,7 +41,6 @@ const submitEvent = () => {
 <template>
     <v-container>
         <h1 class="text-h4 mb-4">Suggest New Event</h1>
-
         <v-card>
             <v-card-text>
                 <v-form @submit.prevent="submitEvent">
@@ -57,7 +59,7 @@ const submitEvent = () => {
                     
                     <v-textarea v-model="eventForm.description" label="Event Description" required></v-textarea>
 
-                    <v-btn color="primary" type="submit" block>
+                    <v-btn :loading="loading" color="primary" type="submit" block>
                         Submit Event Suggestion
                     </v-btn>
                 </v-form>
