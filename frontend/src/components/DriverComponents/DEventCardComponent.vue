@@ -1,5 +1,5 @@
 <template>
-    <v-card class="mx-auto my-4" max-width="400">
+    <v-card class="mx-auto my-4" max-width="450" style="height: 200px; overflow: hidden;">
       <v-card-title>{{ name }}</v-card-title>
       <v-card-subtitle>
         {{ formatDate(date) }} at {{ time }}
@@ -9,7 +9,9 @@
           <v-icon class="mr-1">mdi-map-marker</v-icon>
           <span>{{ location }}</span>
         </v-row>
-        <div class="mt-4">{{ description }}</div>
+        <div class="mt-4" style="height: 60px; overflow: hidden;">
+          {{ description.substring(0, 200) }}{{ description.length > 200 ? '...' : '' }}
+        </div>
       </v-card-text>
     </v-card>
   </template>
