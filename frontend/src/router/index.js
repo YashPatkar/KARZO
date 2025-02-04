@@ -14,6 +14,11 @@ const DriverRoutes = [
     path: '/DEventUploadView',
     name: 'DEventUploadView',
     component: () => import('../views/DriverViews/DEventUploadView.vue')
+  },
+  {
+    path: '/DEventView',
+    name: 'DEventView',
+    component: () => import('../views/DriverViews/DEventView.vue')
   }
 ]
 

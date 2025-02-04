@@ -15,7 +15,7 @@ const items = ref([
     {
         title: 'Events',
         prependIcon: 'mdi-account-group',
-        to: { name: 'DHomeView' },
+        to: { name: 'DEventView' },
     },
     {
         title: 'Events Uploader',

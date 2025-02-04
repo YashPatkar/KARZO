@@ -15,6 +15,7 @@
     // Handle the event data here
     console.log('Event Submitted:', data)
     eventData.value = data
+    // Send this value to api/event/
   }
   </script>
   
