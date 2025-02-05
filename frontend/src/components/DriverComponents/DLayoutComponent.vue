@@ -1,28 +1,35 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, defineAsyncComponent } from 'vue'
 const drawer = ref(true)
+
+// Lazy-load components when clicked
 const items = ref([
     {
         title: 'Home',
         prependIcon: 'mdi-home',
         to: { name: 'DHomeView' },
+        component: defineAsyncComponent(() => import('@/views/DriverViews/DHomeView.vue'))
     },
     {
         title: 'Dashboard',
         prependIcon: 'mdi-view-dashboard-outline',
         to: { name: 'DHomeView' },
+        component: defineAsyncComponent(() => import('@/views/DriverViews/DHomeView.vue'))
     },
     {
         title: 'Events',
         prependIcon: 'mdi-account-group',
         to: { name: 'DEventView' },
+        component: defineAsyncComponent(() => import('@/views/DriverViews/DEventView.vue'))
     },
     {
         title: 'Events Uploader',
         prependIcon: 'mdi-briefcase-outline',
         to: { name: 'DEventUploadView' },
-    },
+        component: defineAsyncComponent(() => import('@/views/DriverViews/DEventUploadView.vue'))
+    }
 ])
+
 </script>
 
 <template>
