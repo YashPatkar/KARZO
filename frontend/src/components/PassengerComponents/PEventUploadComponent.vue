@@ -1,5 +1,5 @@
-<!-- <script setup>
-import { ref, defineEmits } from 'vue'
+<script setup>
+import { ref } from 'vue'
 
 const eventForm = ref({
     name: '',
@@ -34,7 +34,7 @@ const submitEvent = () => {
             description: ''
         }
         loading.value = false
-    }, 1000)
+    }, 500)
 }
 </script>
 
@@ -66,4 +66,4 @@ const submitEvent = () => {
             </v-card-text>
         </v-card>
     </v-container>
-</template> -->
+</template>

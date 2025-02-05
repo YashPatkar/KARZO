@@ -1,27 +1,33 @@
-<!-- <script setup>
-import { ref } from 'vue'
+<script setup>
+import { ref, defineAsyncComponent } from 'vue'
 const drawer = ref(true)
+
+// Lazy-load components when clicked
 const items = ref([
     {
         title: 'Home',
         prependIcon: 'mdi-home',
-        to: { name: 'PassengerHome' },
+        to: { name: 'PHomeView' },
+        component: defineAsyncComponent(() => import('@/views/PassengerViews/PHomeView.vue'))
     },
     {
         title: 'Dashboard',
         prependIcon: 'mdi-view-dashboard-outline',
-        to: { name: 'PassengerHome' },
+        to: { name: 'PHomeView' },
+        component: defineAsyncComponent(() => import('@/views/PassengerViews/PHomeView.vue'))
     },
     {
         title: 'Events',
         prependIcon: 'mdi-account-group',
-        to: { name: 'PassengerEvent' },
+        to: { name: 'PEventView' },
+        component: defineAsyncComponent(() => import('@/views/PassengerViews/PEventView.vue'))
     },
     {
         title: 'Events Uploader',
         prependIcon: 'mdi-briefcase-outline',
-        to: { name: 'PassengerEventUpload' },
-    },
+        to: { name: 'PEventUploadView' },
+        component: defineAsyncComponent(() => import('@/views/PassengerViews/PEventUploadView.vue'))
+    }
 ])
 </script>
 
@@ -59,4 +65,4 @@ const items = ref([
             <slot></slot>
         </v-main>
     </v-layout>
-</template> -->
+</template>

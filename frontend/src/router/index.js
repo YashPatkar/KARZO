@@ -1,12 +1,26 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const PassengerRoutes = [
-
+  {
+    path: '/',
+    name: 'PHomeView',
+    component: () => import('../views/PassengerViews/PHomeView.vue')
+  },
+  {
+    path: '/PEventUploadView',
+    name: 'PEventUploadView',
+    component: () => import('../views/PassengerViews/PEventUploadView.vue')
+  },
+  {
+    path: '/PEventView',
+    name: 'PEventView',
+    component: () => import('../views/PassengerViews/PEventView.vue')
+  }
 ]
 
 const DriverRoutes = [
   {
-    path: '/',
+    path: '/driverHome',
     name: 'DHomeView',
     component: () => import('../views/DriverViews/DHomeView.vue')
   },
