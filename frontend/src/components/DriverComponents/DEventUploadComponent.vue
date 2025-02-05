@@ -34,7 +34,7 @@ const submitEvent = () => {
             description: ''
         }
         loading.value = false
-    }, 1000)
+    }, 500)
 }
 </script>
 
