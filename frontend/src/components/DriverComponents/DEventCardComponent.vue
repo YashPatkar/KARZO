@@ -1,51 +1,58 @@
 <template>
-    <v-card class="mx-auto my-4" max-width="450" style="height: 200px; overflow: hidden;">
-      <v-card-title>{{ name }}</v-card-title>
-      <v-card-subtitle>
+  <div class="max-w-sm mx-auto my-4 bg-white shadow-lg rounded-lg overflow-hidden h-52">
+    <div class="px-4 py-2">
+      <h2 class="text-xl font-semibold text-gray-800">{{ name }}</h2>
+      <p class="text-sm text-gray-600">
         {{ formatDate(date) }} at {{ time }}
-      </v-card-subtitle>
-      <v-card-text>
-        <v-row align="center" class="mx-0">
-          <v-icon class="mr-1">mdi-map-marker</v-icon>
-          <span>{{ location }}</span>
-        </v-row>
-        <div class="mt-4" style="height: 60px; overflow: hidden;">
-          {{ description.substring(0, 200) }}{{ description.length > 200 ? '...' : '' }}
-        </div>
-      </v-card-text>
-    </v-card>
-  </template>
-  
-  <script setup>
+      </p>
+    </div>
+    
+    <div class="px-4 py-2">
+      <div class="flex items-center text-gray-700">
+        <MapPin class="w-5 h-5 mr-2" />
+        <span>{{ location }}</span>
+      </div>
 
-  // Define props using defineProps()
-  const props = defineProps({
-    name: {
-      type: String,
-      required: true,
-    },
-    date: {
-      type: String,
-      required: true,
-    },
-    time: {
-      type: String,
-      required: true,
-    },
-    location: {
-      type: String,
-      required: true,
-    },
-    description: {
-      type: String,
-      required: true,
-    },
-  });
-  
-  // Function to format the date
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
-  </script>
-  
+      <div class="mt-4 text-gray-600 h-16 overflow-hidden">
+        {{ description.substring(0, 200) }}{{ description.length > 200 ? '...' : '' }}
+      </div>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { MapPin } from 'lucide-vue-next';  // Updated import for Vue 3
+
+// Define props using defineProps()
+const props = defineProps({
+  name: {
+    type: String,
+    required: true,
+  },
+  date: {
+    type: String,
+    required: true,
+  },
+  time: {
+    type: String,
+    required: true,
+  },
+  location: {
+    type: String,
+    required: true,
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+});
+
+// Function to format the date
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
+</script>
+
+<style>
+</style>

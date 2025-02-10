@@ -14,7 +14,6 @@ const emit = defineEmits(['submit-event'])
 const loading = ref(false)
 
 const submitEvent = () => {
-    // Simulate API call
     loading.value = true
     setTimeout(() => {
         if (!eventForm.value.name || !eventForm.value.date || !eventForm.value.time || !eventForm.value.location || !eventForm.value.description) {
@@ -22,10 +21,8 @@ const submitEvent = () => {
             loading.value = false
             return
         } else {
-            // Emit event with form data
             emit('submit-event', { ...eventForm.value })
         }
-        // Reset form
         eventForm.value = {
             name: '',
             date: '',
@@ -39,31 +36,86 @@ const submitEvent = () => {
 </script>
 
 <template>
-    <v-container>
-        <h1 class="text-h4 mb-4">Suggest New Event</h1>
-        <v-card>
-            <v-card-text>
-                <v-form @submit.prevent="submitEvent">
-                    <v-text-field v-model="eventForm.name" label="Event name" required></v-text-field>
+    <div class="max-w-2xl mx-auto p-6">
+        <h1 class="text-2xl font-bold mb-4 text-gray-800">Suggest New Event</h1>
+        <div class="bg-white shadow-lg rounded-xl p-6">
+            <form @submit.prevent="submitEvent" class="space-y-4">
+                <!-- Event Name -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Event Name</label>
+                    <input 
+                        v-model="eventForm.name"
+                        type="text"
+                        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        required
+                    />
+                </div>
 
-                    <v-row>
-                        <v-col cols="12" md="6">
-                            <v-text-field v-model="eventForm.date" label="Date" type="date" required></v-text-field>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <v-text-field v-model="eventForm.time" label="Time" type="time" required></v-text-field>
-                        </v-col>
-                    </v-row>
+                <!-- Date and Time -->
+                <div class="flex flex-col md:flex-row gap-4">
+                    <div class="w-full">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                        <input 
+                            v-model="eventForm.date"
+                            type="date"
+                            class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            required
+                        />
+                    </div>
 
-                    <v-text-field v-model="eventForm.location" label="Location" required></v-text-field>
-                    
-                    <v-textarea v-model="eventForm.description" label="Event Description" required></v-textarea>
+                    <div class="w-full">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                        <input 
+                            v-model="eventForm.time"
+                            type="time"
+                            class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                            required
+                        />
+                    </div>
+                </div>
 
-                    <v-btn :loading="loading" color="primary" type="submit" block>
-                        Submit Event Suggestion
-                    </v-btn>
-                </v-form>
-            </v-card-text>
-        </v-card>
-    </v-container>
+                <!-- Location -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                    <input 
+                        v-model="eventForm.location"
+                        type="text"
+                        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        required
+                    />
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Event Description</label>
+                    <textarea 
+                        v-model="eventForm.description"
+                        rows="4"
+                        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        required
+                    ></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    :disabled="loading"
+                    class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 rounded-lg transition duration-200 flex items-center justify-center"
+                >
+                    <svg v-if="loading" class="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                    </svg>
+                    {{ loading ? 'Submitting...' : 'Submit Event Suggestion' }}
+                </button>
+            </form>
+        </div>
+    </div>
 </template>
+
+<style scoped>
+/* Optional: Light gray background */
+body {
+    background-color: #f7fafc;
+}
+</style>

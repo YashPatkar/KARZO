@@ -1,8 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const PassengerRoutes = [
+  // {
+  //   path: '/',
+  //   name: 'HomeView',
+  //   component: () => import('../views/HomeView.vue')
+  // },
   {
-    path: '/',
+    path: '/PHomeView',
     name: 'PHomeView',
     component: () => import('../views/PassengerViews/PHomeView.vue')
   },
