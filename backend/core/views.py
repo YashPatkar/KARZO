@@ -16,6 +16,7 @@ class EventView(APIView): # api/event/
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
         
+    # saving event data from frontend
     def post(self, request):
         data = request.data
         serializer = EventSerializer(data=data)

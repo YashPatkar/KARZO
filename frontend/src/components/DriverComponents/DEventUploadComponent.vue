@@ -10,8 +10,16 @@ const eventForm = ref({
 })
 
 const emit = defineEmits(['submit-event'])
-
 const loading = ref(false)
+
+// Calculate today's date in the format YYYY-MM-DD
+const today = new Date();
+const formattedToday = today.toISOString().split('T')[0];
+
+// Calculate max date (60 days from today)
+const maxDateObj = new Date();
+maxDateObj.setDate(today.getDate() + 60);
+const formattedMaxDate = maxDateObj.toISOString().split('T')[0];
 
 const submitEvent = () => {
     loading.value = true
@@ -21,6 +29,7 @@ const submitEvent = () => {
             loading.value = false
             return
         } else {
+            eventForm.value.date < formattedToday || eventForm.value.date > formattedMaxDate  ? alert('Please select a valid date') : 
             emit('submit-event', { ...eventForm.value })
         }
         eventForm.value = {
@@ -58,6 +67,8 @@ const submitEvent = () => {
                         <input 
                             v-model="eventForm.date"
                             type="date"
+                            :min="formattedToday"
+                            :max="formattedMaxDate"
                             class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                             required
                         />
@@ -119,3 +130,4 @@ body {
     background-color: #f7fafc;
 }
 </style>
+  

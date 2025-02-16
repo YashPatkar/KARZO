@@ -17,9 +17,8 @@ driver_patterns = [
 ]
 
 # Passenger-specific URLs
-passenger_patterns = [
-
-]
+# passenger_patterns = [
+# ]
 
 # Combine all patterns
-urlpatterns = core_patterns + driver_patterns + passenger_patterns
+urlpatterns = core_patterns + driver_patterns #+ passenger_patterns

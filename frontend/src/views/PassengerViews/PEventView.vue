@@ -1,17 +1,13 @@
 <template>
-  <PLayoutComponent>  
+  <PLayoutComponent>
     <div class="container mx-auto px-4 py-6">
       <h1 class="text-2xl font-bold mb-6">Event List</h1>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div v-for="event in events" :key="event.id">
-          <PEventCardComponent
-            :name="event.name"
-            :date="event.date"
-            :time="event.time"
-            :location="event.location"
-            :description="event.description"
-          >
-          </PEventCardComponent>
+      <div class="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
+        <div v-for="event in events" :key="event.id" class="break-inside-avoid bg-white rounded-lg shadow-md p-4">
+          <h2 class="text-xl font-semibold mb-2">{{ event.name }}</h2>
+          <p class="text-sm text-gray-500 mb-1">{{ event.date }} | {{ event.time }}</p>
+          <p class="text-sm text-gray-500 mb-2">Location: {{ event.location }}</p>
+          <p class="text-gray-700 whitespace-pre-wrap">{{ event.description }}</p>
         </div>
       </div>
     </div>
@@ -21,7 +17,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import PLayoutComponent from '@/components/PassengerComponents/PLayoutComponent.vue';
-import PEventCardComponent from '@/components/PassengerComponents/PEventCardComponent.vue';
 import axios from 'axios';
 
 const events = ref([]);
@@ -36,3 +31,7 @@ onMounted(async () => {
   }
 });
 </script>
+
+<style scoped>
+/* Add any additional styling if necessary */
+</style>

@@ -25,7 +25,7 @@ const PassengerRoutes = [
 
 const DriverRoutes = [
   {
-    path: '/driverHome',
+    path: '/DHomeView',
     name: 'DHomeView',
     component: () => import('../views/DriverViews/DHomeView.vue')
   },
