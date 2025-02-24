@@ -2,7 +2,7 @@ from django.urls import path
 # Core
 from core.views import EventView
 # Driver
-from driver.views import AssignDriverView, UnassignDriverView
+from driver.views import AssignDriverView, UnassignDriverView, DriverRegisterView, DriverRegisterVerifyOTPView
 # -----------------------------------------------------------------------------
 
 # Core URLs for common functionality (e.g., events)
@@ -14,6 +14,8 @@ core_patterns = [
 driver_patterns = [
     path('event/<uuid:event_id>/assign/<uuid:driver_id>/', AssignDriverView.as_view(), name='assign-driver'),
     path('event/<uuid:event_id>/unassign/<uuid:driver_id>/', UnassignDriverView.as_view(), name='unassign-driver'),
+    path('driver/driver-register/', DriverRegisterView.as_view(), name='driver-register'),
+    path('driver/register-verify-otp/', DriverRegisterVerifyOTPView.as_view(), name='driver-register-verify-otp'),
 ]
 
 # Passenger-specific URLs

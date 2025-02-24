@@ -138,3 +138,14 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# AbstractAPI Keys for mobile and email verification
+ABSTRACTAPI_EMAIL_VERIFICATION_KEY = "3edd3bd30ee6491badfbc24c6b5ed573"
+ABSTRACTAPI_PHONE_VERIFICATION_KEY = "7b46f3a63416431d8913c4c1f9d65b7f"
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "yashpatkar194@gmail.com"  # Replace with your Gmail
+EMAIL_HOST_PASSWORD = "ksxw ncyo iulz ndnn"  # Use an App Password (not your Gmail password)

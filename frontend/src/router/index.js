@@ -38,6 +38,11 @@ const DriverRoutes = [
     path: '/DEventView',
     name: 'DEventView',
     component: () => import('../views/DriverViews/DEventView.vue')
+  },
+  {
+    path: '',
+    name: 'DRegisterView',
+    component: () => import('../views/DriverViews/DRegisterCardView.vue')
   }
 ]
 
