@@ -14,7 +14,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 # Createsuperuser -> username - yash, password - 123
 
 from pathlib import Path
-
+import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -59,12 +59,25 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:3000",
-#     "http://localhost:5173",
-# ]
+CORS_ALLOW_CREDENTIALS = True  
+CORS_ORIGIN_ALLOW_ALL = True  # ✅ Allows all origins
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'authorization',
+    'x-requested-with',
+    'accept',
+    'origin',
+]
+
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS',
+]
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -139,13 +152,16 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# AbstractAPI Keys for mobile and email verification
 ABSTRACTAPI_EMAIL_VERIFICATION_KEY = "3edd3bd30ee6491badfbc24c6b5ed573"
-ABSTRACTAPI_PHONE_VERIFICATION_KEY = "7b46f3a63416431d8913c4c1f9d65b7f"
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "yashpatkar194@gmail.com"  # Replace with your Gmail
-EMAIL_HOST_PASSWORD = "ksxw ncyo iulz ndnn"  # Use an App Password (not your Gmail password)
+EMAIL_HOST_PASSWORD = "qiae ngkm dhms ixzp"
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Default database-backed sessions
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = False  # Set to True if using HTTPS
+SESSION_COOKIE_SAMESITE = "Lax"

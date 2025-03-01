@@ -40,9 +40,19 @@ const DriverRoutes = [
     component: () => import('../views/DriverViews/DEventView.vue')
   },
   {
-    path: '',
+    path: '/',
     name: 'DRegisterView',
-    component: () => import('../views/DriverViews/DRegisterCardView.vue')
+    component: () => import('../views/DriverViews/LoginViews/DRegisterView.vue')
+  },
+  {
+    path: '/DRegisterCardExtendedView',
+    name: 'DRegisterCardExtendedView',
+    component: () => import('../views/DriverViews/LoginViews/DRegisterCardExtendedView.vue')
+  },
+  {
+    path: '/DMapView',
+    name: 'DMapView',
+    component: () => import('../views/DriverViews/DMapView.vue')
   }
 ]
 
