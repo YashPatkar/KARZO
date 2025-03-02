@@ -17,15 +17,14 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router'; // Import Vue Router
 import api from '@/api';
 
 import PersonalDetailsComponent from '@/components/DriverComponents/loginComponent/PersonalDetailsComponent.vue';
 import VehicleRegistrationComponent from '@/components/DriverComponents/loginComponent/VehicleRegistrationComponent.vue';
 
-// Inject the email provided by DRegisterView.vue
-const email = inject('email');
-
+const router = useRouter(); // Initialize Vue Router
 const currentStep = ref(1);
 
 const personalDetails = ref({
@@ -37,13 +36,14 @@ const personalDetails = ref({
   location: '',
   pincode: '',
   address: '',
-  email: email, // Use the injected email
+  email: '',
+  profilePhoto: null, // Store the selected image file
 });
 
 const vehicleDetails = ref({
   vehicle_number: '',
   vehicle_manufacturer: '',
-  vehicle_type: 'bike', // Default to bike
+  vehicle_type: 'bike',
   vehicle_model: '',
   vehicle_color: '',
   vehicle_registration_date: '',
@@ -65,27 +65,86 @@ const updateVehicleDetails = (details) => {
   vehicleDetails.value = { ...vehicleDetails.value, ...details };
 };
 
+const uploadImageToImgBB = async (file, driverUUID) => {
+  const formData = new FormData();
+  formData.append('image', file);
+  formData.append('name', `${driverUUID}_driver_image`); // Name the image using the driver's UUID
+
+  try {
+    const apiKey = import.meta.env.VITE_IMGBB_API_KEY;
+    if (!apiKey) {
+      throw new Error('ImgBB API key is not set');
+    }
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+      method: 'POST',
+      body: formData,
+    });
+    const result = await response.json();
+    if (result.success) {
+      return result.data.url; // Return the image URL
+    } else {
+      throw new Error('Failed to upload image to ImgBB');
+    }
+  } catch (error) {
+    console.error('Error uploading image to ImgBB:', error);
+    throw error;
+  }
+};
+
 const handleSubmit = async () => {
   try {
-    // Prepare data for the backend
+    // Prepare data for the backend (excluding the image)
     const dataToSend = {
       driver: {
         email: personalDetails.value.email,
       },
       personal_details: {
-        ...personalDetails.value,
+        name: personalDetails.value.name,
+        age: personalDetails.value.age,
+        birth_date: personalDetails.value.birth_date,
+        gender: personalDetails.value.gender,
+        phone: personalDetails.value.phone,
+        location: personalDetails.value.location,
+        pincode: personalDetails.value.pincode,
+        address: personalDetails.value.address,
       },
       vehicle_details: {
-        ...vehicleDetails.value,
+        vehicle_number: vehicleDetails.value.vehicle_number,
+        vehicle_manufacturer: vehicleDetails.value.vehicle_manufacturer,
+        vehicle_type: vehicleDetails.value.vehicle_type,
+        vehicle_model: vehicleDetails.value.vehicle_model,
+        vehicle_color: vehicleDetails.value.vehicle_color,
+        vehicle_registration_date: vehicleDetails.value.vehicle_registration_date,
       },
     };
 
-    // Send data to the backend using Axios
-    const response = await api.post('/api/driver/register', dataToSend);
-    if (response.status === 200) {
-      alert('Registration successful!');
+    // Send data to the backend
+    const response = await api.post('/api/driver/register/', dataToSend);
+
+    if (response.status === 201) {
+      const driverUUID = response.data.driver_uuid; // Get the driver's UUID from the response
+
+      // Upload the image to ImgBB
+      if (personalDetails.value.profilePhoto) {
+        const imageUrl = await uploadImageToImgBB(personalDetails.value.profilePhoto, driverUUID);
+
+        // Send the image URL to the backend to update the driver's profile
+        const updateResponse = await api.patch(`/api/driver/${driverUUID}/`, {
+          profile_photo_url: imageUrl,
+        });
+
+        if (updateResponse.status === 200) {
+          // Redirect to /DHomeView after successful registration and image upload
+          router.push({ path: '/DHomeView' });
+        } else {
+          throw new Error('Failed to update driver profile with image URL');
+        }
+      } else {
+        // Redirect to /DHomeView even if no image is uploaded
+        router.push({ path: '/DHomeView' });
+      }
     } else {
-      alert('Registration Failed');
+      throw new Error('Failed to register driver');
     }
   } catch (error) {
     console.error('Error submitting form:', error);

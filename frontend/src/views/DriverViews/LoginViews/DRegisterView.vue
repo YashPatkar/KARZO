@@ -17,7 +17,7 @@
 
         <button
           type="submit"
-          class="w-full mt-6 p-3 text-white bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition duration-300"
+          class="w-full mt-6 p-3 text-white bg-blue-600 hover:bg-blue-900 rounded-lg font-semibold transition duration-300"
         >
           Send Sign-In Link
         </button>
@@ -27,19 +27,15 @@
 </template>
 
 <script setup>
-import { ref, provide } from 'vue';
-import { useRouter } from 'vue-router';
-import { sendSignInEmail } from '@/utils/firebase'; // Import updated function
+import { ref, provide, computed } from 'vue';
+import { sendSignInEmail } from '@/utils/supabase'; // Import updated function
 
 const email = ref('');
-const router = useRouter();
+// Provide the email to child components
+provide('email', computed(() => email.value));
 
 const sendLink = () => {
   sendSignInEmail(email.value).then(() => {
-    // Provide the email to child components
-    provide('email', email.value);
-    // Redirect to the registration form
-    router.push({ path: '/register-details' });
   });
 };
 </script>

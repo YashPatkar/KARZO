@@ -22,6 +22,7 @@ class PersonalDetails(models.Model):
     name = models.CharField(max_length=100)
     age = models.IntegerField()
     birth_date = models.DateField()
+    profile_photo_url = models.URLField(blank=True)
     gender = models.CharField(max_length=10)
     phone = models.CharField(max_length=15)
     location = models.CharField(max_length=100)

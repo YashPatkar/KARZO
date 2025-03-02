@@ -106,9 +106,11 @@
         type="email"
         id="email"
         v-model="personalDetails.email"
+        :disabled="!!email"
         class="mt-1 p-3 border rounded-md w-full focus:ring-2 focus:ring-green-200"
-        readonly
       />
+      <!-- Make the field disabled if email is provided via inject -->
+      <span v-if="!isEmailValid" class="text-sm text-red-500">Email is required</span>
     </div>
 
     <!-- Next Button -->
@@ -125,8 +127,8 @@
 import { reactive, computed, inject } from 'vue';
 
 // Inject the email provided by DRegisterView.vue
-const email = inject('email');
-
+const email = inject('email', null); // Default to null if email is not provided
+console.log(email + ' is the email');
 const emit = defineEmits(['next', 'update:personalDetails']);
 
 // Reactive object for personal details
@@ -139,7 +141,7 @@ const personalDetails = reactive({
   location: '',
   pincode: '',
   address: '',
-  email: email, // Use the injected email
+  email: email || '', // Use the injected email if available, otherwise default to empty string
 });
 
 // Validation computed properties
