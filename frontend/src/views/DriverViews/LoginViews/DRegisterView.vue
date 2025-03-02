@@ -1,14 +1,3 @@
-<script setup>
-import { ref } from "vue";
-import { sendSignInEmail } from "@/utils/firebase"; // Import updated function
-
-const email = ref("");
-
-const sendLink = () => {
-  sendSignInEmail(email.value);
-};
-</script>
-
 <template>
   <div class="flex items-center justify-center min-h-screen bg-gray-100">
     <div class="w-full max-w-md p-6 bg-white shadow-lg rounded-2xl">
@@ -36,3 +25,21 @@ const sendLink = () => {
     </div>
   </div>
 </template>
+
+<script setup>
+import { ref, provide } from 'vue';
+import { useRouter } from 'vue-router';
+import { sendSignInEmail } from '@/utils/firebase'; // Import updated function
+
+const email = ref('');
+const router = useRouter();
+
+const sendLink = () => {
+  sendSignInEmail(email.value).then(() => {
+    // Provide the email to child components
+    provide('email', email.value);
+    // Redirect to the registration form
+    router.push({ path: '/register-details' });
+  });
+};
+</script>

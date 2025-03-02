@@ -8,8 +8,6 @@ from .utils import generate_otp, send_email_otp, verify_email
 from django.core.cache import cache
 from django.views.decorators.csrf import csrf_exempt
 
-
-
 @api_view(['GET'])
 def AssignDriver(self, request, event_id, driver_id):
     event = get_object_or_404(Event, id=event_id)
@@ -23,3 +21,7 @@ def UnassignDriver(self, request, event_id, driver_id):
     driver = get_object_or_404(Driver, id=driver_id)
     event.drivers.remove(driver)
     return Response({"message": "Driver unassigned successfully"}, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def driver_register(request):
+    return Response({"message": "Driver registered successfully"}, status=status.HTTP_200_OK)
