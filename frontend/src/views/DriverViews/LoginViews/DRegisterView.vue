@@ -12,14 +12,16 @@
             id="email"
             placeholder="Enter your email"
             class="w-full mt-2 p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            :disabled="isLoading"
           />
         </div>
 
         <button
           type="submit"
-          class="w-full mt-6 p-3 text-white bg-blue-600 hover:bg-blue-900 rounded-lg font-semibold transition duration-300"
+          class="w-full mt-6 p-3 text-white bg-blue-600 hover:bg-blue-900 rounded-lg font-semibold transition duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          :disabled="isLoading"
         >
-          Send Sign-In Link
+          {{ isLoading ? "Please Wait..." : "Send Sign-In Link" }}
         </button>
       </form>
     </div>
@@ -31,11 +33,12 @@ import { ref, provide, computed } from 'vue';
 import { sendSignInEmail } from '@/utils/supabase'; // Import updated function
 
 const email = ref('');
-// Provide the email to child components
+const isLoading = ref(false); // Track button loading state
 provide('email', computed(() => email.value));
 
-const sendLink = () => {
-  sendSignInEmail(email.value).then(() => {
-  });
+const sendLink = async () => {
+  isLoading.value = true; // Disable button
+  await sendSignInEmail(email.value);
+  isLoading.value = false; // Enable button again
 };
 </script>

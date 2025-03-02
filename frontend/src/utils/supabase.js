@@ -20,7 +20,7 @@ const validateEmail = async (email) => {
   }
 };
 
-// Send magic link after validation
+// Send magic link after validation & ensure driver exists in the database
 export const sendSignInEmail = async (email) => {
   if (!email.toLowerCase().endsWith("@gmail.com")) {
     alert("Only Gmail addresses are allowed.");
@@ -31,9 +31,30 @@ export const sendSignInEmail = async (email) => {
   }
 
   try {
+    // Check driver status
+    const { data: driver, error: fetchError } = await supabase
+      .from("Driver")
+      .select("registration_status")
+      .eq("email", email)
+      .maybeSingle();
+
+    let redirectUrl = import.meta.env.VITE_PENDING; // Default to PENDING
+
+    if (driver?.registration_status === "COMPLETED") {
+      redirectUrl = import.meta.env.VITE_COMPLETED;
+    }
+
+    if (!driver) {
+      // Insert driver if not exists
+      await supabase.from("Driver").insert([
+        { email, registration_status: "PENDING" }, // Default state
+      ]);
+    }
+
+    // Send magic link with the correct redirect URL
     let { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: import.meta.env.VITE_REDIRECT_URL },
+      options: { emailRedirectTo: redirectUrl },
     });
 
     if (error) {
