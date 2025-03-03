@@ -1,31 +1,31 @@
 <template>
   <div class="min-h-screen bg-gray-100 p-8">
     <div v-if="currentStep === 1">
-      <PersonalDetailsComponent
-        @next="nextStep"
-        @update:personalDetails="updatePersonalDetails"
-      />
+      <PersonalDetailsComponent @next="nextStep" @update:personalDetails="updatePersonalDetails" />
     </div>
     <div v-else-if="currentStep === 2">
-      <VehicleRegistrationComponent
-        @prev="prevStep"
-        @submit="handleSubmit"
-        @update:vehicleDetails="updateVehicleDetails"
-      />
+      <VehicleRegistrationComponent @prev="prevStep" @submit="handleSubmit"
+        @update:vehicleDetails="updateVehicleDetails" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router'; // Import Vue Router
 import api from '@/api';
+import { supabase } from "@/utils/supabase"; 
 
 import PersonalDetailsComponent from '@/components/DriverComponents/loginComponent/PersonalDetailsComponent.vue';
 import VehicleRegistrationComponent from '@/components/DriverComponents/loginComponent/VehicleRegistrationComponent.vue';
 
 const router = useRouter(); // Initialize Vue Router
 const currentStep = ref(1);
+const storedEmail = ref('');
+
+onMounted(() => {
+  storedEmail.value = sessionStorage.getItem('userEmail') || '';
+});
 
 const personalDetails = ref({
   name: '',
@@ -68,7 +68,7 @@ const updateVehicleDetails = (details) => {
 const uploadImageToImgBB = async (file, driverUUID) => {
   const formData = new FormData();
   formData.append('image', file);
-  formData.append('name', `${driverUUID}_driver_image`); // Name the image using the driver's UUID
+  formData.append('name', `${driverUUID}_driver_image`);
 
   try {
     const apiKey = import.meta.env.VITE_IMGBB_API_KEY;
@@ -93,7 +93,11 @@ const uploadImageToImgBB = async (file, driverUUID) => {
 
 const handleSubmit = async () => {
   try {
-    // Prepare data for the backend (excluding the image)
+    if (personalDetails.value.email !== storedEmail.value) {
+      alert('Email verification failed!');
+      return;
+    }
+
     const dataToSend = {
       driver: {
         email: personalDetails.value.email,
@@ -118,29 +122,26 @@ const handleSubmit = async () => {
       },
     };
 
-    // Send data to the backend
     const response = await api.post('/api/driver/register/', dataToSend);
+    console.log('Driver registration response:', response);
 
     if (response.status === 201) {
-      const driverUUID = response.data.driver_uuid; // Get the driver's UUID from the response
-
-      // Upload the image to ImgBB
+      const driverUUID = response.data.driver_uuid;
       if (personalDetails.value.profilePhoto) {
         const imageUrl = await uploadImageToImgBB(personalDetails.value.profilePhoto, driverUUID);
-
-        // Send the image URL to the backend to update the driver's profile
-        const updateResponse = await api.patch(`/api/driver/${driverUUID}/`, {
+        const updateResponse = await api.patch(`/api/driver/${driverUUID}/update-profile/`, {
           profile_photo_url: imageUrl,
         });
-
         if (updateResponse.status === 200) {
-          // Redirect to /DHomeView after successful registration and image upload
+          await supabase
+            .from("driver")
+            .update({ registration_status: "COMPLETED" })
+            .eq("email", storedEmail.value);
           router.push({ path: '/DHomeView' });
         } else {
           throw new Error('Failed to update driver profile with image URL');
         }
       } else {
-        // Redirect to /DHomeView even if no image is uploaded
         router.push({ path: '/DHomeView' });
       }
     } else {

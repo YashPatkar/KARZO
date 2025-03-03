@@ -99,39 +99,31 @@
       <span v-if="!isAddressValid" class="text-sm text-red-500">Address is required</span>
     </div>
 
-    <!-- Email Field -->
+    <!-- Email Field (Pre-filled & Disabled) -->
     <div class="mb-6">
       <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
       <input
         type="email"
         id="email"
         v-model="personalDetails.email"
-        :disabled="!!email"
-        class="mt-1 p-3 border rounded-md w-full focus:ring-2 focus:ring-green-200"
+        class="mt-1 p-3 border rounded-md w-full bg-gray-200 cursor-not-allowed"
+        disabled
       />
-      <!-- Make the field disabled if email is provided via inject -->
-      <span v-if="!isEmailValid" class="text-sm text-red-500">Email is required</span>
     </div>
 
     <!-- Next Button -->
-    <button
-      @click="validateAndNext"
-      class="bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-200"
-    >
+    <button @click="validateAndNext" class="bg-green-500 text-white px-6 py-3 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-200">
       Next
     </button>
   </div>
 </template>
 
 <script setup>
-import { reactive, computed, inject } from 'vue';
+import { reactive, computed, onMounted } from 'vue';
+import { supabase } from '@/utils/supabase';
 
-// Inject the email provided by DRegisterView.vue
-const email = inject('email', null); // Default to null if email is not provided
-console.log(email + ' is the email');
 const emit = defineEmits(['next', 'update:personalDetails']);
 
-// Reactive object for personal details
 const personalDetails = reactive({
   name: '',
   age: null,
@@ -141,7 +133,18 @@ const personalDetails = reactive({
   location: '',
   pincode: '',
   address: '',
-  email: email || '', // Use the injected email if available, otherwise default to empty string
+  email: ''
+});
+
+// Fetch the current user's email and store in sessionStorage
+onMounted(async () => {
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data?.user) {
+    console.error("User not found:", error);
+  } else {
+    personalDetails.email = data.user.email;
+    sessionStorage.setItem('userEmail', data.user.email); // ✅ Store email for later use
+  }
 });
 
 // Validation computed properties

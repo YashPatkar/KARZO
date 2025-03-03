@@ -7,6 +7,8 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY
 );
 
+export { supabase };  // ✅ Now it exports correctly
+
 // Validate email before sending sign-in link
 const validateEmail = async (email) => {
   try {
@@ -20,6 +22,8 @@ const validateEmail = async (email) => {
   }
 };
 
+export { validateEmail }; // ✅ Also export validateEmail
+
 // Send magic link after validation & ensure driver exists in the database
 export const sendSignInEmail = async (email) => {
   if (!email.toLowerCase().endsWith("@gmail.com")) {
@@ -31,22 +35,26 @@ export const sendSignInEmail = async (email) => {
   }
 
   try {
-    // Check driver status
+    // Check driver status in Supabase
     const { data: driver, error: fetchError } = await supabase
-      .from("Driver")
+      .from("driver")
       .select("registration_status")
       .eq("email", email)
       .maybeSingle();
 
-    let redirectUrl = import.meta.env.VITE_PENDING; // Default to PENDING
+    if (fetchError) {
+      console.log(fetchError);
+      console.log('-----------------');
+    }
 
+    let redirectUrl = import.meta.env.VITE_PENDING; // Default to PENDING
     if (driver?.registration_status === "COMPLETED") {
       redirectUrl = import.meta.env.VITE_COMPLETED;
     }
 
     if (!driver) {
       // Insert driver if not exists
-      await supabase.from("Driver").insert([
+      await supabase.from("driver").insert([
         { email, registration_status: "PENDING" }, // Default state
       ]);
     }
@@ -58,12 +66,12 @@ export const sendSignInEmail = async (email) => {
     });
 
     if (error) {
-      console.error("Error sending magic link:", error.message);
+      console.error("Error sending Verification link:", error.message);
       return;
     }
 
     window.localStorage.setItem("emailForSignIn", email);
-    alert("Magic link sent! Check your email.");
+    alert("Verification link sent! Check your email.");
   } catch (error) {
     console.error("Unexpected error:", error.message);
   }
