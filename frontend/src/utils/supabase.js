@@ -24,7 +24,6 @@ const validateEmail = async (email) => {
 
 export { validateEmail }; // ✅ Also export validateEmail
 
-// Send magic link after validation & ensure driver exists in the database
 export const sendSignInEmail = async (email) => {
   if (!email.toLowerCase().endsWith("@gmail.com")) {
     alert("Only Gmail addresses are allowed.");
@@ -35,41 +34,18 @@ export const sendSignInEmail = async (email) => {
   }
 
   try {
-    // Check driver status in Supabase
-    const { data: driver, error: fetchError } = await supabase
-      .from("driver")
-      .select("registration_status")
-      .eq("email", email)
-      .maybeSingle();
-
-    if (fetchError) {
-      console.log(fetchError);
-      console.log('-----------------');
-    }
-
-    let redirectUrl = import.meta.env.VITE_PENDING; // Default to PENDING
-    if (driver?.registration_status === "COMPLETED") {
-      redirectUrl = import.meta.env.VITE_COMPLETED;
-    }
-
-    if (!driver) {
-      // Insert driver if not exists
-      await supabase.from("driver").insert([
-        { email, registration_status: "PENDING" }, // Default state
-      ]);
-    }
-
-    // Send magic link with the correct redirect URL
-    let { error } = await supabase.auth.signInWithOtp({
+    // Step 1: Send the magic link
+    const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: redirectUrl },
+      options: { emailRedirectTo: import.meta.env.VITE_PENDING },
     });
 
     if (error) {
-      console.error("Error sending Verification link:", error.message);
+      console.error("Error sending magic link:", error);
       return;
     }
 
+    // Step 2: Store the email in localStorage (to use after authentication)
     window.localStorage.setItem("emailForSignIn", email);
     alert("Verification link sent! Check your email.");
   } catch (error) {

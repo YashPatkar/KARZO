@@ -8,6 +8,7 @@ from .utils import generate_otp, send_email_otp, verify_email
 from django.contrib.auth.models import User
 from .serializers import DriverUserSerializer, PersonalDetailsSerializer, VehicleDetailsSerializer
 from .models import DriverUser, PersonalDetails, VehicleDetails
+from uuid import UUID
 
 # @api_view(['GET'])
 # def AssignDriver(self, request, event_id, driver_id):
@@ -85,20 +86,26 @@ def driver_register(request):
         driver.delete()
         return Response({"error": f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
 @api_view(['PATCH'])
 def update_driver_profile(request, driver_uuid):
     """
     API endpoint to update the profile of a driver.
     """
     try:
+        driver_uuid = UUID(driver_uuid)
+        print('driver_uuid:', driver_uuid)
         # Get the DriverUser instance first
         driver_user = DriverUser.objects.get(id=driver_uuid)
+        print('driver_user:', driver_user)
         # Retrieve the related PersonalDetails instance
         driver = PersonalDetails.objects.get(driver=driver_user)
+        print('driver:', driver)
     except (DriverUser.DoesNotExist, PersonalDetails.DoesNotExist):
         return Response({'error': 'Driver not found'}, status=status.HTTP_404_NOT_FOUND)
 
     profile_photo_url = request.data.get('profile_photo_url')
+    print('profile_photo_url:', profile_photo_url)
     if profile_photo_url:
         driver.profile_photo_url = profile_photo_url
         driver.save()

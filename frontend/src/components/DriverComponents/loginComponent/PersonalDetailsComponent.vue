@@ -2,6 +2,19 @@
   <div class="p-6 bg-white rounded-lg shadow-md">
     <h2 class="text-2xl font-semibold mb-6 text-gray-800">Personal Details</h2>
 
+    <!-- Photo field -->
+    <div class="mb-6">
+      <label for="profilePhoto" class="block text-sm font-medium text-gray-700 mb-2">Profile Photo</label>
+      <input
+        type="file"
+        id="profilePhoto"
+        accept="image/*"
+        @change="handleProfilePhotoUpload"
+        class="mt-1 p-3 border rounded-md w-full focus:ring-2 focus:ring-green-200"
+      />
+      <span v-if="!isProfilePhotoValid" class="text-sm text-red-500">Profile Photo is required</span>
+    </div>
+
     <!-- Name Field -->
     <div class="mb-6">
       <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Name</label>
@@ -133,7 +146,8 @@ const personalDetails = reactive({
   location: '',
   pincode: '',
   address: '',
-  email: ''
+  email: '',
+  profilePhoto: null, // Store the selected image file
 });
 
 // Fetch the current user's email and store in sessionStorage
@@ -147,6 +161,14 @@ onMounted(async () => {
   }
 });
 
+// Handle profile photo upload
+const handleProfilePhotoUpload = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    personalDetails.profilePhoto = file;
+  }
+};
+
 // Validation computed properties
 const isNameValid = computed(() => personalDetails.name.trim() !== '');
 const isAgeValid = computed(() => personalDetails.age !== null && personalDetails.age > 0);
@@ -156,6 +178,7 @@ const isLocationValid = computed(() => personalDetails.location.trim() !== '');
 const isPincodeValid = computed(() => personalDetails.pincode.trim() !== '');
 const isAddressValid = computed(() => personalDetails.address.trim() !== '');
 const isEmailValid = computed(() => personalDetails.email.trim() !== '');
+const isProfilePhotoValid = computed(() => personalDetails.profilePhoto !== null); // Validate profile photo
 
 // Check if the entire form is valid
 const isFormValid = computed(() => {
@@ -167,7 +190,8 @@ const isFormValid = computed(() => {
     isLocationValid.value &&
     isPincodeValid.value &&
     isAddressValid.value &&
-    isEmailValid.value
+    isEmailValid.value &&
+    isProfilePhotoValid.value // Include profile photo validation
   );
 });
 

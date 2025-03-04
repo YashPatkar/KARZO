@@ -134,17 +134,18 @@ const handleSubmit = async () => {
     console.log('Driver registration response:', response);
 
     if (response.status === 201) {
-      const driverUUID = response.data.driver_uuid;
+      const driverUUID = String(response.data.driver_uuid);
+
+      // Upload profile photo to ImgBB if it exists
       if (personalDetails.value.profilePhoto) {
         const imageUrl = await uploadImageToImgBB(personalDetails.value.profilePhoto, driverUUID);
+
+        // Update driver profile with the image URL
         const updateResponse = await api.patch(`/api/driver/${driverUUID}/update-profile/`, {
           profile_photo_url: imageUrl,
         });
-        if (updateResponse.status === 200) {
-          await supabase
-            .from("driver")
-            .update({ registration_status: "COMPLETED" })
-            .eq("email", storedEmail.value);
+
+        if (updateResponse.status === 200) {   
           router.push({ path: '/DHomeView' });
         } else {
           throw new Error('Failed to update driver profile with image URL');
