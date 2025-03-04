@@ -2,12 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 import uuid
 
-class Driver(models.Model):
-    user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.user.username
-
 class DriverUser(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -16,9 +10,15 @@ class DriverUser(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.email
+        return f'{self.email} - {self.id}'
 
 class PersonalDetails(models.Model):
+    driver = models.OneToOneField(
+        DriverUser, 
+        on_delete=models.CASCADE, 
+        primary_key=True,
+        related_name="personal_details"  # Added related_name
+    )
     name = models.CharField(max_length=100)
     age = models.IntegerField()
     birth_date = models.DateField()
@@ -28,19 +28,23 @@ class PersonalDetails(models.Model):
     location = models.CharField(max_length=100)
     pincode = models.CharField(max_length=10)
     address = models.TextField()
-    driver = models.OneToOneField(DriverUser, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
 
 class VehicleDetails(models.Model):
+    driver = models.OneToOneField(
+        DriverUser, 
+        on_delete=models.CASCADE, 
+        primary_key=True,
+        related_name="vehicle_details"  # Added related_name
+    )
     vehicle_number = models.CharField(max_length=20, unique=True)
     vehicle_manufacturer = models.CharField(max_length=20)
     vehicle_type = models.CharField(max_length=20)
     vehicle_model = models.CharField(max_length=20)
     vehicle_color = models.CharField(max_length=20)
     vehicle_registration_date = models.DateField()
-    driver = models.OneToOneField(DriverUser, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.vehicle_number

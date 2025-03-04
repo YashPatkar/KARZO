@@ -23,9 +23,17 @@ const router = useRouter(); // Initialize Vue Router
 const currentStep = ref(1);
 const storedEmail = ref('');
 
-onMounted(() => {
+onMounted(async () => {
+  // Refresh session after magic link login
+  const { error } = await supabase.auth.refreshSession();
+  if (error) {
+    console.error("Session refresh failed:", error);
+  }
+
+  // Get stored email from sessionStorage
   storedEmail.value = sessionStorage.getItem('userEmail') || '';
 });
+
 
 const personalDetails = ref({
   name: '',
