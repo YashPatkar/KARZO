@@ -117,3 +117,13 @@ def update_driver_profile(request, driver_uuid):
         },
         status=status.HTTP_200_OK,
     )
+
+@api_view(['GET'])
+def check_verifications(request, email):
+    try:
+        if DriverUser.objects.filter(email=email).exists():
+            return Response({"message": "User is verified"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "User is not verified"}, status=status.HTTP_204_NO_CONTENT)
+    except Exception as e:
+        return Response({"message": f"Can't fetch user detail: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)

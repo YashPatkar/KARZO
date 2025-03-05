@@ -33,3 +33,5 @@ def send_email_otp(email, otp):
     response = send_mail(subject, message, sender, recipients)
     print("Email Response:", response)  # Debugging
     return response
+
+
