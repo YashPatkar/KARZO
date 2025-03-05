@@ -109,7 +109,7 @@ def update_driver_profile(request, driver_uuid):
     if profile_photo_url:
         driver.profile_photo_url = profile_photo_url
         driver.save()
-
+    print('User Registration Successful')
     return Response(
         {
             'message': 'Driver profile updated successfully!',

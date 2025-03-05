@@ -73,10 +73,10 @@ const updateVehicleDetails = (details) => {
   vehicleDetails.value = { ...vehicleDetails.value, ...details };
 };
 
-const uploadImageToImgBB = async (file, driverUUID) => {
+const uploadImageToImgBB = async (file, email, driverUUID) => {
   const formData = new FormData();
   formData.append('image', file);
-  formData.append('name', `${driverUUID}_driver_image`);
+  formData.append('name', `${email}_${driverUUID}_driver_image`);
 
   try {
     const apiKey = import.meta.env.VITE_IMGBB_API_KEY;
@@ -138,7 +138,7 @@ const handleSubmit = async () => {
 
       // Upload profile photo to ImgBB if it exists
       if (personalDetails.value.profilePhoto) {
-        const imageUrl = await uploadImageToImgBB(personalDetails.value.profilePhoto, driverUUID);
+        const imageUrl = await uploadImageToImgBB(personalDetails.value.profilePhoto, personalDetails.value.email, driverUUID);
 
         // Update driver profile with the image URL
         const updateResponse = await api.patch(`/api/driver/${driverUUID}/update-profile/`, {

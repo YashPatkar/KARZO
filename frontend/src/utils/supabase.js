@@ -37,7 +37,7 @@ export const sendSignInEmail = async (email) => {
     // Step 1: Send the magic link
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: import.meta.env.VITE_PENDING },
+      options: { emailRedirectTo: import.meta.env.VITE_HOME },
     });
 
     if (error) {
