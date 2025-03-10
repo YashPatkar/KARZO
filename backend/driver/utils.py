@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.mail import send_mail
 
 def generate_otp():
-    return randint(10000, 99999)
+    return randint(100000, 999999)
 
 def verify_email(email):
     if not email:
@@ -25,13 +25,11 @@ def verify_phone(phone):
     return response.get("valid") is True
 
 def send_email_otp(email, otp):
-    subject = "Your OTP Code"
-    message = f"Your email OTP is {otp}. Do not share this with anyone."
+    subject = "KARZO Email OTP"
+    message = f"Your email OTP is {otp} for KARZO. Do not share this with anyone."
     sender = settings.EMAIL_HOST_USER
     recipients = [email]
 
     response = send_mail(subject, message, sender, recipients)
     print("Email Response:", response)  # Debugging
     return response
-
-

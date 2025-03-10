@@ -2,13 +2,16 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 # from core.models import Event
 from driver.models import PersonalDetails
-from .utils import generate_otp, send_email_otp, verify_email
+from .utils import generate_otp, send_email_otp
 from django.contrib.auth.models import User
-from .serializers import DriverUserSerializer, PersonalDetailsSerializer, VehicleDetailsSerializer
-from .models import DriverUser, PersonalDetails, VehicleDetails
+from .serializers import PersonalDetailsSerializer, VehicleDetailsSerializer
+from .models import DriverUser, PersonalDetails
 from uuid import UUID
+from django.core.cache import cache
+from django.conf import settings
 
 # @api_view(['GET'])
 # def AssignDriver(self, request, event_id, driver_id):
@@ -48,7 +51,6 @@ def driver_register(request):
         # **Create the DriverUser instance**
         driver = DriverUser.objects.create(user=user, email=email)
         print('driver:', driver)
-
         # Save Personal Details
         personal_details_data = data.get('personal_details', {})
         print('personal_details_data:', personal_details_data)
@@ -86,7 +88,6 @@ def driver_register(request):
         driver.delete()
         return Response({"error": f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
 @api_view(['PATCH'])
 def update_driver_profile(request, driver_uuid):
     """
@@ -118,12 +119,58 @@ def update_driver_profile(request, driver_uuid):
         status=status.HTTP_200_OK,
     )
 
-@api_view(['GET'])
-def check_verifications(request, email):
-    try:
-        if DriverUser.objects.filter(email=email).exists():
-            return Response({"message": "User is verified"}, status=status.HTTP_200_OK)
-        else:
-            return Response({"message": "User is not verified"}, status=status.HTTP_204_NO_CONTENT)
-    except Exception as e:
-        return Response({"message": f"Can't fetch user detail: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+class CheckVerifications(APIView):
+    def get(self, request, email):
+        '''API endpoint to check if a user is verified'''
+        try:
+            print('------------------')
+            email = str(email).lower()
+            driver = DriverUser.objects.filter(email=email).first()
+            print(driver)
+
+            if driver:  # Only verifying email
+                # Generate OTP
+                otp = generate_otp()
+                print(otp, email)
+                # Store OTP temporarily (5 minutes expiry)
+                cache.set(email, otp, timeout=300)
+
+                # Send OTP via Django Email (Using utils.py function)
+                email_response = send_email_otp(email, otp)
+                print('email_response:', email_response)
+
+                if email_response == 1:  # send_mail returns 1 if successful
+                    return Response({"message": "OTP sent successfully to email"}, status=status.HTTP_200_OK)
+                else:
+                    return Response({"message": "Failed to send OTP"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            return Response({"message": "User is not verified or does not exist"}, status=status.HTTP_204_NO_CONTENT)
+
+        except Exception as e:
+            print('asdasdasdasdsad')
+            return Response({"message": f"Error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+    def post(self, request, email):
+        '''API endpoint to verify the OTP'''
+        try:
+            driver = DriverUser.objects.filter(email=email).first()
+            if not driver:
+                return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            otp = cache.get(email)
+            if not otp:
+                return Response({"message": "OTP expired or not found"}, status=status.HTTP_400_BAD_REQUEST)
+
+            user_otp = request.data.get('otp')
+            if not user_otp:
+                return Response({"error": "OTP is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+            if str(user_otp) == str(otp):  # Compare as strings
+                cache.delete(email)  # Remove OTP from cache after successful verification
+                return Response({"message": "OTP verified successfully"}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception as e:
+            return Response({"error": f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        

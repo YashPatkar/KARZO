@@ -1,8 +1,8 @@
 <template>
     <div class="flex items-center justify-center min-h-screen bg-gray-100">
       <div class="w-full max-w-md p-6 bg-white shadow-lg rounded-2xl">
-        <h2 class="text-2xl font-semibold text-center text-gray-700">Verify OTP</h2>
-        <p class="text-center text-gray-600 mt-2">Enter the OTP sent to your phone.</p>
+        <h2 class="text-2xl font-semibold text-center text-gray-700">Verify Your Email</h2>
+        <p class="text-center text-gray-600 mt-2">Enter the OTP sent to {{ email }}</p>
   
         <form @submit.prevent="verifyOtp" class="mt-6">
           <div>
@@ -33,7 +33,7 @@
   </template>
   
   <script setup>
-  import { ref } from 'vue';
+  import { ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import api from '@/api';
   
@@ -41,7 +41,14 @@
   const isLoading = ref(false);
   const errorMessage = ref('');
   const router = useRouter();
-  const email = sessionStorage.getItem('driver_email'); // Retrieve email from session storage
+  const email = ref('');
+  
+  onMounted(() => {
+    email.value = sessionStorage.getItem('driver_email') || '';
+    if (!email.value) {
+      router.push({ name: 'DRegisterView' });
+    }
+  });
   
   const verifyOtp = async () => {
     if (otp.value.length !== 6) return;
@@ -50,7 +57,7 @@
     errorMessage.value = '';
   
     try {
-      const response = await api.post('/driver/verify_otp/', { email, otp: otp.value });
+      const response = await api.post(`/api/driver/${email.value}/check-verifications/`, { otp: otp.value });
   
       if (response.status === 200) {
         router.push({ name: 'DHomeView' });

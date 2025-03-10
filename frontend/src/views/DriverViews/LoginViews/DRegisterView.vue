@@ -1,9 +1,9 @@
 <template>
   <div class="flex items-center justify-center min-h-screen bg-gray-100">
     <div class="w-full max-w-md p-6 bg-white shadow-lg rounded-2xl">
-      <h2 class="text-2xl font-semibold text-center text-gray-700">Register with Email</h2>
+      <h2 class="text-2xl font-semibold text-center text-gray-700">Register or Login</h2>
 
-      <form @submit.prevent="sendLink" class="mt-6">
+      <form @submit.prevent="sendEmail" class="mt-6">
         <div>
           <label for="email" class="block text-sm font-medium text-gray-600">Email Address</label>
           <input
@@ -21,43 +21,56 @@
           class="w-full mt-6 p-3 text-white bg-blue-600 hover:bg-blue-900 rounded-lg font-semibold transition duration-300 disabled:bg-gray-400 disabled:cursor-not-allowed"
           :disabled="isLoading"
         >
-          {{ isLoading ? "Please Wait..." : "Send Sign-In Link" }}
+          {{ isLoading ? "Sending..." : "Send Login Link" }}
         </button>
       </form>
+
+      <p v-if="errorMessage" class="text-red-500 text-center mt-3">{{ errorMessage }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
-import { sendSignInEmail } from '@/utils/supabase';
-import api from '@/api';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import api from "@/api";
+import { sendSignInEmail } from "@/utils/supabase";
 
-const email = ref('');
+const email = ref("");
 const isLoading = ref(false);
+const errorMessage = ref("");
 const router = useRouter();
 
-const sendLink = async () => {
+const sendEmail = async () => {
+  if (!email.value) {
+    errorMessage.value = "Please enter an email.";
+    return;
+  }
+
   isLoading.value = true;
+  errorMessage.value = "";
 
   try {
-    const response = await api.get(`/driver/${email.value}/check-verifications/`);
+    const response = await api.get(`http://127.0.0.1:8000/api/driver/${email.value}/check-verifications/`, {
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true,
+    });
 
     if (response.status === 200) {
-      // Redirect to verification page if the user is verified
-      router.push({ name: 'DVerifyView'});
+      // ✅ If user exists, send OTP via Django and redirect
+      sessionStorage.setItem("driver_email", email.value);
+      router.push({ name: "DVerifyView" });
     } else if (response.status === 204) {
-      // If user is not verified, send sign-in email
+      // ✅ If user does not exist, send magic link via Supabase
       await sendSignInEmail(email.value);
+      errorMessage.value = "A Verification link has been sent to your email.";
     } else {
-      alert('An error occurred. Please try again.');
+      errorMessage.value = "Unexpected response. Please try again.";
     }
   } catch (error) {
-    console.error(error);
-    alert('Failed to check verification status.');
+    errorMessage.value = "An error occurred. Please check your email and try again.";
   } finally {
-    isLoading.value = false; // Ensure loading state is reset
+    isLoading.value = false;
   }
 };
 </script>

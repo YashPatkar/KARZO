@@ -15,6 +15,9 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -43,14 +46,13 @@ INSTALLED_APPS = [
     'core',
     'passenger',
     'driver',
-    'corsheaders',
     'rest_framework',
     'api',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -59,26 +61,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOW_CREDENTIALS = True  
-CORS_ORIGIN_ALLOW_ALL = True  # ✅ Allows all origins
-
-CORS_ALLOW_HEADERS = [
-    'content-type',
-    'authorization',
-    'x-requested-with',
-    'accept',
-    'origin',
+# CORS_ORIGIN_ALLOW_ALL = True  # ✅ Allows all origins
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
 ]
-
-CORS_ALLOW_METHODS = [
-    'GET',
-    'POST',
-    'PUT',
-    'PATCH',
-    'DELETE',
-    'OPTIONS',
-]
-
+CORS_ALLOW_CREDENTIALS = True
 ROOT_URLCONF = 'backend.urls'
 
 TEMPLATES = [
@@ -152,14 +139,14 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-ABSTRACTAPI_EMAIL_VERIFICATION_KEY = "3edd3bd30ee6491badfbc24c6b5ed573"
+ABSTRACTAPI_EMAIL_VERIFICATION_KEY = os.getenv("ABSTRACTAPI_EMAIL_VERIFICATION_KEY")
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = "yashpatkar194@gmail.com"  # Replace with your Gmail
-EMAIL_HOST_PASSWORD = "qiae ngkm dhms ixzp"
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Default database-backed sessions
 SESSION_COOKIE_HTTPONLY = True
