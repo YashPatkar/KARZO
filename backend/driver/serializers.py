@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import DriverUser, PersonalDetails, VehicleDetails
+from core.models import Event
 
 class DriverUserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,3 +20,8 @@ class VehicleDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = VehicleDetails
         fields = ['driver', 'vehicle_number', 'vehicle_manufacturer', 'vehicle_type', 'vehicle_model', 'vehicle_color', 'vehicle_registration_date']
+
+class EventSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Event
+        fields = '__all__'

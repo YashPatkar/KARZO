@@ -1,8 +1,7 @@
 from django.urls import path
-from django.http import HttpResponse as h
-# from core.views import EventView
+from .views import user_events
+
 
 urlpatterns = [
-    # path('event/', EventView.as_view()),
-    path('event/', lambda request: h(request, 'Hello, World!')),
+    path('events/', user_events, name='events'),
 ]

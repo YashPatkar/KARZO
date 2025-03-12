@@ -26,7 +26,7 @@ def verify_phone(phone):
 
 def send_email_otp(email, otp):
     subject = "KARZO Email OTP"
-    message = f"Your email OTP is {otp} for KARZO. Do not share this with anyone."
+    message = f"Your email OTP is {otp} for KARZO. It is valid for 5 minutes. Do not share this with anyone."
     sender = settings.EMAIL_HOST_USER
     recipients = [email]
 

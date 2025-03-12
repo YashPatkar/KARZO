@@ -1,11 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const PassengerRoutes = [
-  // {
-  //   path: '/',
-  //   name: 'HomeView',
-  //   component: () => import('../views/HomeView.vue')
-  // },
   {
     path: '/PHomeView',
     name: 'PHomeView',
@@ -40,7 +35,7 @@ const DriverRoutes = [
     component: () => import('../views/DriverViews/DEventView.vue')
   },
   {
-    path: '/',
+    path: '/DRegisterView',
     name: 'DRegisterView',
     component: () => import('../views/DriverViews/LoginViews/DRegisterView.vue')
   },
@@ -61,11 +56,20 @@ const DriverRoutes = [
   }
 ]
 
+const CoreRoutes = [
+  {
+    path: '/',
+    name: 'HomeView',
+    component: () => import('../views/StartPageViews/startpage.vue')
+  }
+]
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     ...DriverRoutes,
     ...PassengerRoutes,
+    ...CoreRoutes,
   ],
 })
 export default router

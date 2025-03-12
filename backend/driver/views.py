@@ -3,11 +3,10 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-# from core.models import Event
 from driver.models import PersonalDetails
 from .utils import generate_otp, send_email_otp
 from django.contrib.auth.models import User
-from .serializers import PersonalDetailsSerializer, VehicleDetailsSerializer
+from .serializers import PersonalDetailsSerializer, VehicleDetailsSerializer, EventSerializer
 from .models import DriverUser, PersonalDetails
 from uuid import UUID
 from django.core.cache import cache
@@ -129,7 +128,6 @@ class CheckVerifications(APIView):
             print(driver)
 
             if driver:  # Only verifying email
-                # Generate OTP
                 otp = generate_otp()
                 print(otp, email)
                 # Store OTP temporarily (5 minutes expiry)
@@ -151,26 +149,95 @@ class CheckVerifications(APIView):
             return Response({"message": f"Error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     def post(self, request, email):
-        '''API endpoint to verify the OTP'''
+        '''API endpoint to send an OTP to the user's email'''
         try:
+            email = str(email).lower()
             driver = DriverUser.objects.filter(email=email).first()
             if not driver:
                 return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
-            otp = cache.get(email)
-            if not otp:
-                return Response({"message": "OTP expired or not found"}, status=status.HTTP_400_BAD_REQUEST)
+            otp = generate_otp()
+            cache.set(email, otp, timeout=300)  # Store OTP for 5 minutes
 
-            user_otp = request.data.get('otp')
-            if not user_otp:
-                return Response({"error": "OTP is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-            if str(user_otp) == str(otp):  # Compare as strings
-                cache.delete(email)  # Remove OTP from cache after successful verification
-                return Response({"message": "OTP verified successfully"}, status=status.HTTP_200_OK)
+            # Send OTP via Django Email (Using utils.py function)
+            email_response = send_email_otp(email, otp)
+            if email_response == 1:  # send_mail returns 1 if successful
+                return Response({"message": "OTP sent successfully to email"}, status=status.HTTP_200_OK)
             else:
-                return Response({"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({"message": "Failed to send OTP"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         except Exception as e:
             return Response({"error": f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+
+@api_view(['POST'])
+def resend_otp(request, email):
+    """API endpoint to resend OTP to the user"""
+    try:
+        email = str(email).lower()
+        driver = DriverUser.objects.filter(email=email).first() 
+
+        if not driver:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        new_otp = generate_otp()
+        cache.set(email, new_otp, timeout=300)  # Store OTP for 5 minutes
+
+        email_response = send_email_otp(email, new_otp)
+
+        if email_response == 1:
+            return Response({"message": "OTP resent successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Failed to send OTP"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    except Exception as e:
+        return Response({"error": f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+def send_driver_data(request, email):
+    
+    try:
+        # Fetch driver using get_object_or_404
+        print('email:', email)
+        driver = get_object_or_404(DriverUser, email=email)
+
+        # Fetch personal details securely using OneToOneField
+        try:
+            personal_details = PersonalDetails.objects.get(driver=driver)
+        except PersonalDetails.DoesNotExist:
+            return Response({"error": "Personal details not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Return all driver + personal details
+        return Response(
+            {
+                'driver': {
+                    'email': driver.email,
+                    'phone': personal_details.phone,
+                    'name': personal_details.name,
+                    'profile_photo_url': personal_details.profile_photo_url,
+                    'age': personal_details.age,
+                    'birth_date': str(personal_details.birth_date),
+                    'gender': personal_details.gender,
+                    'location': personal_details.location,
+                    'pincode': personal_details.pincode,
+                    'address': personal_details.address,
+                }
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    except Exception as e:
+
+        print(e)
+        return Response({"error": f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+def user_submitted_event(request):
+    try:
+        data = request.data
+        serializer = EventSerializer(data = data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

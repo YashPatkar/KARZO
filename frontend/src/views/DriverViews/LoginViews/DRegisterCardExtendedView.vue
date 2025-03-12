@@ -13,6 +13,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router'; // Import Vue Router
+import { useDriverStore } from '@/stores/driverStore'; // Import driver store
 import api from '@/api';
 import { supabase } from "@/utils/supabase"; 
 
@@ -20,6 +21,8 @@ import PersonalDetailsComponent from '@/components/DriverComponents/loginCompone
 import VehicleRegistrationComponent from '@/components/DriverComponents/loginComponent/VehicleRegistrationComponent.vue';
 
 const router = useRouter(); // Initialize Vue Router
+const driverStore = useDriverStore(); // Initialize driver store
+
 const currentStep = ref(1);
 const storedEmail = ref('');
 
@@ -145,8 +148,10 @@ const handleSubmit = async () => {
           profile_photo_url: imageUrl,
         });
 
-        if (updateResponse.status === 200) {   
-          router.push({ path: '/DHomeView' });
+        if (updateResponse.status === 200) {  
+          driverStore.setEmail(personalDetails.value.email); // Store email in Pinia
+          await driverStore.fetchDriverData(); // Fetch driver data
+          router.push({ path: '/DHomeView' }); // Redirect to Home
         } else {
           throw new Error('Failed to update driver profile with image URL');
         }

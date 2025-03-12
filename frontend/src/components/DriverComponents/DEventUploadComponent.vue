@@ -1,44 +1,44 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useDriverStore } from '@/stores/driverStore'
 
+const driverStore = useDriverStore()
+const loading = ref(false)
+
+// Compute today's date & max selectable date
+const today = new Date()
+const formattedToday = computed(() => today.toISOString().split('T')[0])
+const formattedMaxDate = computed(() => {
+    let maxDate = new Date()
+    maxDate.setFullYear(today.getFullYear() + 1) // Max 1 year from today
+    return maxDate.toISOString().split('T')[0]
+})
+
+// Define event form state
 const eventForm = ref({
     name: '',
     date: '',
     time: '',
     location: '',
-    description: ''
+    description: '',
+    drivers: [driverStore.driver?.id], // Send the driver's ID
+    driver_name: driverStore.driver?.name || '',
+    driver_email: driverStore.driver?.email || '',
+    user_type: 'driver',
 })
 
 const emit = defineEmits(['submit-event'])
-const loading = ref(false)
-
-// Calculate today's date in the format YYYY-MM-DD
-const today = new Date();
-const formattedToday = today.toISOString().split('T')[0];
-
-// Calculate max date (60 days from today)
-const maxDateObj = new Date();
-maxDateObj.setDate(today.getDate() + 60);
-const formattedMaxDate = maxDateObj.toISOString().split('T')[0];
 
 const submitEvent = () => {
+    if (!eventForm.value.name || !eventForm.value.date || !eventForm.value.time || 
+        !eventForm.value.location || !eventForm.value.description) {
+        alert('Please fill all required fields')
+        return
+    }
+
     loading.value = true
     setTimeout(() => {
-        if (!eventForm.value.name || !eventForm.value.date || !eventForm.value.time || !eventForm.value.location || !eventForm.value.description) {
-            alert('Please fill all the fields')
-            loading.value = false
-            return
-        } else {
-            eventForm.value.date < formattedToday || eventForm.value.date > formattedMaxDate  ? alert('Please select a valid date') : 
-            emit('submit-event', { ...eventForm.value })
-        }
-        eventForm.value = {
-            name: '',
-            date: '',
-            time: '',
-            location: '',
-            description: ''
-        }
+        emit('submit-event', { ...eventForm.value }) // Send correct data
         loading.value = false
     }, 500)
 }
@@ -125,9 +125,7 @@ const submitEvent = () => {
 </template>
 
 <style scoped>
-/* Optional: Light gray background */
 body {
     background-color: #f7fafc;
 }
 </style>
-  

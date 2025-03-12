@@ -1,30 +1,46 @@
 <template>
-  <PLayoutComponent>
+  <DLayoutComponent>
     <div class="container mx-auto px-4 py-6">
-      <h1 class="text-2xl font-bold mb-6">Event List</h1>
-      <div class="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
-        <div v-for="event in events" :key="event.id" class="break-inside-avoid bg-white rounded-lg shadow-md p-4">
-          <h2 class="text-xl font-semibold mb-2">{{ event.name }}</h2>
-          <p class="text-sm text-gray-500 mb-1">{{ event.date }} | {{ event.time }}</p>
-          <p class="text-sm text-gray-500 mb-2">Location: {{ event.location }}</p>
-          <p class="text-gray-700 whitespace-pre-wrap">{{ event.description }}</p>
+      <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Upcoming Events</h1>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div 
+          v-for="event in events" 
+          :key="event.id" 
+          class="bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105"
+        >
+          <div class="p-6">
+            <h2 class="text-xl font-bold text-gray-900 mb-2">{{ event.name }}</h2>
+            <p class="text-sm text-gray-600 mb-2">
+              📅 {{ event.date }} | ⏰ {{ event.time }}
+            </p>
+            <p class="text-sm text-gray-600 mb-2">
+              📍 <span class="font-medium">{{ event.location }}</span>
+            </p>
+            <p class="text-gray-700 text-sm whitespace-pre-wrap mb-4">
+              {{ event.description }}
+            </p>
+            <div class="flex justify-between items-center text-sm text-gray-500">
+              <span>👤 {{ event.driver_name }}</span>
+              <span>📧 {{ event.driver_email }}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </PLayoutComponent>
+  </DLayoutComponent>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import PLayoutComponent from '@/components/PassengerComponents/PLayoutComponent.vue';
-import axios from 'axios';
+import DLayoutComponent from '@/components/DriverComponents/DLayoutComponent.vue';
+import api from '@/api';
 
 const events = ref([]);
 
-// Fetch the events when component is mounted
+// Fetch the events when the component is mounted
 onMounted(async () => {
   try {
-    const response = await axios.get('http://127.0.0.1:8000/api/event/');
+    const response = await api.get('/api/core/events/');
     events.value = response.data;
   } catch (error) {
     console.error('Error fetching events:', error);
@@ -33,5 +49,15 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-/* Add any additional styling if necessary */
+/* Ensures a modern card layout */
+.grid > div {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+}
+
+.grid > div:hover {
+  transform: scale(1.03);
+}
 </style>
