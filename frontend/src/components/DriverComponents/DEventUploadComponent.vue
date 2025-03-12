@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useDriverStore } from '@/stores/driverStore'
 
 const driverStore = useDriverStore()
@@ -10,7 +10,7 @@ const today = new Date()
 const formattedToday = computed(() => today.toISOString().split('T')[0])
 const formattedMaxDate = computed(() => {
     let maxDate = new Date()
-    maxDate.setFullYear(today.getFullYear() + 1) // Max 1 year from today
+    maxDate.setFullYear(today.getFullYear() + 1)
     return maxDate.toISOString().split('T')[0]
 })
 
@@ -27,6 +27,41 @@ const eventForm = ref({
     user_type: 'driver',
 })
 
+// Location search state
+const locationQuery = ref('')
+const locationSuggestions = ref([])
+
+const fetchLocationSuggestions = async () => {
+    if (!locationQuery.value.trim()) {
+        locationSuggestions.value = []
+        return
+    }
+
+    try {
+        const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?format=json&q=${locationQuery.value}&countrycodes=IN&limit=5`
+        )
+        const data = await response.json()
+        locationSuggestions.value = data.map((place) => ({
+            display_name: place.display_name,
+            lat: place.lat,
+            lon: place.lon,
+        }))
+    } catch (error) {
+        console.error('Error fetching location suggestions:', error)
+    }
+}
+
+// Watch for location input changes
+watch(locationQuery, fetchLocationSuggestions)
+
+// Select location from dropdown
+const selectLocation = (location) => {
+    eventForm.value.location = location.display_name
+    locationQuery.value = location.display_name
+    locationSuggestions.value = [] // Clear suggestions after selection
+}
+
 const emit = defineEmits(['submit-event'])
 
 const submitEvent = () => {
@@ -38,7 +73,7 @@ const submitEvent = () => {
 
     loading.value = true
     setTimeout(() => {
-        emit('submit-event', { ...eventForm.value }) // Send correct data
+        emit('submit-event', { ...eventForm.value })
         loading.value = false
     }, 500)
 }
@@ -85,15 +120,24 @@ const submitEvent = () => {
                     </div>
                 </div>
 
-                <!-- Location -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                <!-- Location (Dynamic) -->
+                <div class="relative">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Location (India)</label>
                     <input 
-                        v-model="eventForm.location"
+                        v-model="locationQuery"
                         type="text"
+                        @input="fetchLocationSuggestions"
                         class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         required
                     />
+                    <!-- Suggestions Dropdown -->
+                    <ul v-if="locationSuggestions.length" class="absolute w-full bg-white border border-gray-300 rounded-lg shadow-md mt-1 z-10">
+                        <li v-for="location in locationSuggestions" :key="location.display_name" 
+                            @click="selectLocation(location)" 
+                            class="p-2 cursor-pointer hover:bg-gray-100">
+                            {{ location.display_name }}
+                        </li>
+                    </ul>
                 </div>
 
                 <!-- Description -->

@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from core.models import Event
+from driver.serializers import EventSerializer
 
 # # class EventView(APIView): # api/event/
 # #     # giving all event data to frontend
@@ -24,9 +25,10 @@ from core.models import Event
 
 @api_view(['GET'])
 def user_events(request):
-    '''giving all event data to frontend'''
+    '''Send Events to frontend'''
     try:
-        events = Event.objects.all()
-        return Response(events, status=status.HTTP_200_OK)
+        events = Event.objects.all()  # Query all events
+        serialized_events = EventSerializer(events, many=True)  # Serialize the queryset
+        return Response(serialized_events.data, status=status.HTTP_200_OK)  # Return serialized data
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
