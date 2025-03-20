@@ -39,7 +39,7 @@ const fetchLocationSuggestions = async () => {
 
     try {
         const response = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${locationQuery.value}&countrycodes=IN&limit=5`
+            `https://nominatim.openstreetmap.org/search?format=json&q=${locationQuery.value}&countrycodes=IN&limit=3`
         )
         const data = await response.json()
         locationSuggestions.value = data.map((place) => ({

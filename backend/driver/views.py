@@ -10,21 +10,6 @@ from .serializers import PersonalDetailsSerializer, VehicleDetailsSerializer, Ev
 from .models import DriverUser, PersonalDetails
 from uuid import UUID
 from django.core.cache import cache
-from django.conf import settings
-
-# @api_view(['GET'])
-# def AssignDriver(self, request, event_id, driver_id):
-#     event = get_object_or_404(Event, id=event_id)
-#     driver = get_object_or_404(Driver, id=driver_id)
-#     event.drivers.add(driver)
-#     return Response({"message": "Driver assigned successfully"}, status=status.HTTP_200_OK)
-
-# @api_view(['GET'])
-# def UnassignDriver(self, request, event_id, driver_id):
-#     event = get_object_or_404(Event, id=event_id)
-#     driver = get_object_or_404(Driver, id=driver_id)
-#     event.drivers.remove(driver)
-#     return Response({"message": "Driver unassigned successfully"}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def driver_register(request):
@@ -147,7 +132,7 @@ class CheckVerifications(APIView):
         except Exception as e:
             print('asdasdasdasdsad')
             return Response({"message": f"Error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-        
+    
     def post(self, request, email):
         '''API endpoint to send an OTP to the user's email'''
         try:
@@ -211,15 +196,8 @@ def send_driver_data(request, email):
             {
                 'driver': {
                     'email': driver.email,
-                    'phone': personal_details.phone,
                     'name': personal_details.name,
                     'profile_photo_url': personal_details.profile_photo_url,
-                    'age': personal_details.age,
-                    'birth_date': str(personal_details.birth_date),
-                    'gender': personal_details.gender,
-                    'location': personal_details.location,
-                    'pincode': personal_details.pincode,
-                    'address': personal_details.address,
                 }
             },
             status=status.HTTP_200_OK,
@@ -231,13 +209,15 @@ def send_driver_data(request, email):
         return Response({"error": f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
-def user_submitted_event(request):
+def event_submit(request):
     try:
         data = request.data
-        serializer = EventSerializer(data = data)
+        print('data:', data)
+        serializer = EventSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
+        print("Error2222222: ", e)
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)

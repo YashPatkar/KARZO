@@ -1,3 +1,4 @@
+import PVerifyView from '@/views/PassengerViews/LoginViews/PVerifyView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const PassengerRoutes = [
@@ -15,6 +16,21 @@ const PassengerRoutes = [
     path: '/PEventView',
     name: 'PEventView',
     component: () => import('../views/PassengerViews/PEventView.vue')
+  },
+  {
+    path: '/PRegisterView',
+    name: 'PRegisterView',
+    component: () => import('../views/PassengerViews/LoginViews/PRegisterView.vue')
+  },
+  {
+    path: '/PRegisterCardExtendedView',
+    name: 'PRegisterCardExtendedView',
+    component: () => import('../views/PassengerViews/LoginViews/PRegisterCardExtendedView.vue')
+  },
+  {
+    path: '/PVerifyView',
+    name: 'PVerifyView',
+    component: () => import('../views/PassengerViews/LoginViews/PVerifyView.vue')
   }
 ]
 

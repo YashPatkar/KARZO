@@ -1,7 +1,7 @@
 from django.db import models
 import uuid
 from driver.models import DriverUser
-
+from django.utils import timezone
 # Create your models here.
 class Event(models.Model):
     drivers = models.ManyToManyField(DriverUser, related_name='events', blank=True)
@@ -18,3 +18,14 @@ class Event(models.Model):
 
     def __str__(self):
         return f'{self.name} - {self.date}'
+    
+class otpData(models.Model):
+    email = models.EmailField()
+    otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f'{self.email} - {self.otp}'
+    
+    def is_expired(self):
+        return (timezone.now() - self.created_at).seconds > 300

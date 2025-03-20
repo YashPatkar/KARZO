@@ -25,7 +25,7 @@ onMounted(async () => {
 
 
 const driverName = computed(() => driverStore.driver.name || 'Driver');
-const profilePhoto = computed(() => driverStore.driver.profile_photo_url || 'https://cdn.vuetifyjs.com/images/john.png');
+const profilePhoto = computed(() => driverStore.driver.profile_photo_url || 'https://imgs.search.brave.com/TvEa5hDYoEHqMQXTiWO9VZK3Ow2GKxoSnIcxFb1IrBg/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNDcw/MTAwODQ4L3ZlY3Rv/ci9tYWxlLXByb2Zp/bGUtaWNvbi13aGl0/ZS1vbi10aGUtYmx1/ZS1iYWNrZ3JvdW5k/LmpwZz9zPTYxMng2/MTImdz0wJms9MjAm/Yz0yWjNBczdLZEhx/U0tCNlVEQnBTSWJN/a3dPZ1lRdGJoU1dy/RjFaSFg1MDVFPQ');
 
 // Computed properties for profile image and name
 

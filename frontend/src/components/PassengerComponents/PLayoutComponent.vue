@@ -1,6 +1,19 @@
 <script setup>
-import { ref, defineAsyncComponent } from 'vue';
 import { Home, LayoutDashboard, Users, Briefcase, Menu, Settings, LogOut } from 'lucide-vue-next';
+import { usePassengerStore } from '@/stores/passengerStore';
+import { ref, defineAsyncComponent, onMounted, computed } from 'vue';
+
+const passengerStore = usePassengerStore();
+
+onMounted(async () => {
+  try {
+    await passengerStore.fetchPassengerData();
+  } catch (error) {
+    console.error('Error in onMounted:', error);
+  }
+});
+
+const passenger = computed(() => passengerStore.passenger);
 
 const drawer = ref(false);  // Set default to false so it's hidden on mobile
 const showDropdown = ref(false);
@@ -78,13 +91,17 @@ const items = ref([
         >
           <Menu class="w-6 h-6 text-gray-700" />
         </button>
-        <h1 class="text-lg font-semibold">My Dashboard</h1>
-        <div class="relative">
-          <button @click="showDropdown = !showDropdown" class="p-2 focus:outline-none">
+        <h1 class="text-lg font-semibold">Karzo</h1>
+        <div class="relative flex items-center gap-2">
+            <button @click="toggleFullScreen">
+            <i :class="isFullScreen ? 'fa-solid fa-compress' : 'fa-solid fa-expand'"></i>
+            </button>
+          <button @click="showDropdown = !showDropdown" class="p-2 focus:outline-none flex items-center gap-1">
             <img
-              src="https://cdn.vuetifyjs.com/images/john.png"
+              src="https://imgs.search.brave.com/TvEa5hDYoEHqMQXTiWO9VZK3Ow2GKxoSnIcxFb1IrBg/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNDcw/MTAwODQ4L3ZlY3Rv/ci9tYWxlLXByb2Zp/bGUtaWNvbi13aGl0/ZS1vbi10aGUtYmx1/ZS1iYWNrZ3JvdW5k/LmpwZz9zPTYxMng2/MTImdz0wJms9MjAm/Yz0yWjNBczdLZEhx/U0tCNlVEQnBTSWJN/a3dPZ1lRdGJoU1dy/RjFaSFg1MDVFPQ"
               class="w-8 h-8 rounded-full"
             />
+            {{ passenger.name }}
           </button>
           <div
             v-if="showDropdown"
