@@ -26,22 +26,22 @@ def passenger_register(request):
     data = request.data
     email = data.get("email")
     token = data.get("token")
+    profile_photo_url = data.get("profile_photo")  # Get the profile photo URL
 
     if not email or not token:
         return Response(
             {"error": "Email and token are required"},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
     # Validate Token
     try:
         registration = RegistrationToken.objects.get(token=token, email=email)
         if registration.is_expired():
-
             return Response(
                 {"error": "Token expired"}, status=status.HTTP_400_BAD_REQUEST
             )
     except RegistrationToken.DoesNotExist:
-
         return Response(
             {"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST
         )
@@ -62,7 +62,7 @@ def passenger_register(request):
         # Create PassengerUser
         passenger = PassengerUser.objects.create(user=user, email=email)
 
-        # Create PersonalDetails
+        # Create PersonalDetails with profile photo URL
         PersonalDetails.objects.create(
             passenger=passenger,
             full_name=data.get("name", ""),
@@ -70,16 +70,13 @@ def passenger_register(request):
             gender=data.get("gender", "male"),
             phone_number=data.get("phone", ""),
             address=data.get("address", ""),
+            profile_photo=profile_photo_url,  # Save the profile photo URL
         )
 
         # Delete token after successful registration
         registration.delete()
 
         return Response(
-            {
-                "message": "Passenger registered successfully!",
-                "email": email,
-            },
             status=status.HTTP_201_CREATED,
         )
 
@@ -89,7 +86,6 @@ def passenger_register(request):
             {"error": f"An unexpected error occurred: {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
-
 
 @api_view(["POST"])
 def validate_token(request):
@@ -149,14 +145,16 @@ class check_user(APIView):
                 {
                     "name": first_name,  # Get name
                     "email": passenger_user.email,  # Get email from PassengerUser
+                    "profile_photo": personal_details.profile_photo,  # Get profile photo URL
                 },
                 status=status.HTTP_200_OK,
             )
 
         except Exception as e:
+            print('---------------')
             return Response(
                 {"error": f"An unexpected error occurred: {str(e)}"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_302_FOUND,
             )
 
     def post(self, request):
@@ -166,7 +164,7 @@ class check_user(APIView):
         email = request.data.get("email")
         if not email:
             return Response(
-                {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST
             )
         try:
             if PassengerUser.objects.filter(email=email).exists():
@@ -178,15 +176,14 @@ class check_user(APIView):
                         otp_data.save()
                     except Exception as e:
                         return Response(
-                            {"message": "OTP not saved"},
-                            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                            status=status.HTTP_302_FOUND,
                         )
                     return Response(
-                        {"message": "OTP sent successfully"}, status=status.HTTP_200_OK
+                        status=status.HTTP_200_OK
                     )
                 else:
                     return Response(
-                        {"message": "OTP not sent"}, status=status.HTTP_400_BAD_REQUEST
+                        status=status.HTTP_400_BAD_REQUEST
                     )
             else:
                 # Send registration link to the user
@@ -200,7 +197,7 @@ class check_user(APIView):
         except Exception as e:
             return Response(
                 {"error": f"An unexpected error occurred: {str(e)}"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                status=status.HTTP_302_FOUND,
             )
 
 
@@ -230,6 +227,7 @@ def event_submit(request):
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
+        print("Validation errors:", serializer.errors)
         return Response(status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         print("Error2222222: ", e)

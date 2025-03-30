@@ -37,7 +37,7 @@ const handleRegister = async () => {
 <template>
   <div class="flex items-center justify-center min-h-screen bg-gray-100">
     <div class="w-full max-w-md p-6 bg-white shadow-lg rounded-2xl">
-      <h2 class="text-2xl font-semibold text-center text-gray-700">Register</h2>
+      <h2 class="text-2xl font-semibold text-center text-gray-700">Register/Login</h2>
       
       <p v-if="errorMessage" class="text-red-500 text-center mt-3">{{ errorMessage }}</p>
 

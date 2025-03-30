@@ -1,12 +1,6 @@
-import PVerifyView from '@/views/PassengerViews/LoginViews/PVerifyView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const PassengerRoutes = [
-  {
-    path: '/PHomeView',
-    name: 'PHomeView',
-    component: () => import('../views/PassengerViews/PHomeView.vue')
-  },
   {
     path: '/PEventUploadView',
     name: 'PEventUploadView',
@@ -31,6 +25,16 @@ const PassengerRoutes = [
     path: '/PVerifyView',
     name: 'PVerifyView',
     component: () => import('../views/PassengerViews/LoginViews/PVerifyView.vue')
+  },
+  {
+    path: '/PDashboardView',
+    name: 'PDashboardView',
+    component: () => import('../views/PassengerViews/PDashboardView.vue')
+  },
+  {
+    path: '/PSuggestionView',
+    name: 'PSuggestionView',
+    component: () => import('../views/PassengerViews/PSuggestionView.vue')
   }
 ]
 
@@ -77,7 +81,10 @@ const CoreRoutes = [
     path: '/',
     name: 'HomeView',
     component: () => import('../views/StartPageViews/startpage.vue')
-  }
+  },
+  { path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('../views/StartPageViews/NotFound.vue')}
 ]
 
 const router = createRouter({

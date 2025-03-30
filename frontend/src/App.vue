@@ -2,6 +2,7 @@
 import { RouterView, useRouter } from 'vue-router';
 import { onMounted } from 'vue';
 import { supabase } from '@/utils/supabase';
+import 'leaflet/dist/leaflet.css'
 
 const router = useRouter();
 

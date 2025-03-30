@@ -51,9 +51,8 @@ const sendEmail = async () => {
   errorMessage.value = "";
 
   try {
-    const response = await api.get(`http://127.0.0.1:8000/api/driver/${email.value}/check-verifications/`, {
+    const response = await api.get(`/api/driver/${email.value}/check-verifications/`, {
       headers: { "Content-Type": "application/json" },
-      withCredentials: true,
     });
 
     if (response.status === 200) {

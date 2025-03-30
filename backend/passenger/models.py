@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 import uuid
+from django.core.validators import MinValueValidator, MaxValueValidator
 class RegistrationToken(models.Model):
     """
     Model to store registration tokens for passenger sign-up.
@@ -52,10 +53,11 @@ class PersonalDetails(models.Model):
 
     passenger = models.OneToOneField(PassengerUser, on_delete=models.CASCADE, related_name="personal_details")  # Link to PassengerUser
     full_name = models.CharField(max_length=255)  # Full name of the passenger
-    age = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(120)])  # Age of the passenger
+    age = models.PositiveIntegerField(validators=[MinValueValidator(14), MaxValueValidator(120)])  # Age of the passenger
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default="male")  # Gender of the passenger
     phone_number = models.CharField(max_length=15)  # Phone number of the passenger
     address = models.TextField()  # Address of the passenger
+    profile_photo = models.URLField(blank=True, null=True)  # **NEW: Profile photo URL field**
 
     def __str__(self):
         return f"Personal Details for {self.passenger.email}"

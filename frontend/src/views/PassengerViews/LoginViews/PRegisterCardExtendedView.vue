@@ -10,6 +10,7 @@ const email = ref("");
 const errorMessage = ref("");
 const isTokenValid = ref(false);
 const isLoading = ref(false);
+const profilePhoto = ref(null);
 
 const personalDetails = reactive({
   name: "",
@@ -38,6 +39,38 @@ onMounted(async () => {
   }
 });
 
+// Handle file selection
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    profilePhoto.value = file;
+  }
+};
+
+// Upload image to ImgBB
+const uploadImageToImgBB = async () => {
+  if (!profilePhoto.value) return null;
+
+  const formData = new FormData();
+  formData.append("image", profilePhoto.value);
+
+  try {
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      return data.data.url;
+    }
+  } catch (error) {
+    console.error("Error uploading image:", error);
+  }
+
+  return null;
+};
+
 const registerPassenger = async () => {
   if (!isTokenValid.value) {
     errorMessage.value = "Token validation failed. Cannot proceed.";
@@ -53,15 +86,26 @@ const registerPassenger = async () => {
   isLoading.value = true;
 
   try {
+    // Upload profile photo first
+    const profilePhotoUrl = await uploadImageToImgBB();
+
+    if (!profilePhotoUrl) {
+      alert("Failed to upload profile photo. Please try again.");
+      isLoading.value = false;
+      return;
+    }
+
+    // Proceed with registration after successful image upload
     const response = await api.post("/api/passenger/register/", {
       ...personalDetails,
       email: email.value,
       token: token.value,
+      profile_photo: profilePhotoUrl, // Send profile image URL to backend
     });
 
     if (response.status === 201) {
       sessionStorage.setItem("passenger_email", email.value);
-      router.push("/PEventView"); // Redirect to the next step with email
+      router.push("/PEventView"); // Redirect to the next step
     }
   } catch (error) {
     alert(error.response?.data?.message || "An error occurred. Try again.");
@@ -110,6 +154,11 @@ const registerPassenger = async () => {
       <div class="mb-6">
         <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
         <input type="email" :value="email" disabled class="p-3 border rounded-md w-full bg-gray-200" />
+      </div>
+
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-700 mb-2">Profile Photo</label>
+        <input type="file" accept="image/*" @change="handleFileChange" class="p-3 border rounded-md w-full focus:ring-2 focus:ring-blue-200" />
       </div>
 
       <button
