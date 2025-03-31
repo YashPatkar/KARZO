@@ -1,97 +1,166 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import { useDriverStore } from '@/stores/driverStore';
-import { useRouter } from 'vue-router';
+import { usedriverStore } from '@/stores/driverStore';
+import { ref, defineAsyncComponent, onMounted, computed, onBeforeUnmount } from 'vue';
 
-const router = useRouter();
+const driverStore = usedriverStore();
+onMounted(async () => {
+  try {
+    await driverStore.fetchdriverData();
+  } catch (error) {
+    console.error('Error in onMounted:', error);
+  }
+});
+
+const driver = computed(() => driverStore.driver);
 const drawer = ref(false);
 const showDropdown = ref(false);
+const isFullScreen = ref(false);
+
+// Full-Screen Toggle Function
+const toggleFullScreen = () => {
+  if (!isFullScreen.value) {
+    document.documentElement.requestFullscreen?.();
+  } else {
+    document.exitFullscreen?.();
+  }
+};
+
+// Listen for Full-Screen Changes
+const handleFullScreenChange = () => {
+  isFullScreen.value = !!document.fullscreenElement;
+};
+
+onMounted(() => {
+  document.addEventListener('fullscreenchange', handleFullScreenChange);
+});
+onBeforeUnmount(() => {
+  document.removeEventListener('fullscreenchange', handleFullScreenChange);
+});
+
+// Close Dropdown When Clicking Outside
+const closeDropdown = (event) => {
+  if (!event.target.closest('.dropdown-menu')) {
+    showDropdown.value = false;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('click', closeDropdown);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', closeDropdown);
+});
 
 const toggleDrawer = () => {
   drawer.value = !drawer.value;
 };
 
-const driverStore = useDriverStore();
-
-onMounted(async () => {
-  if (!driverStore.email) {
-    console.error('Driver email is missing! Redirecting to DVerifyView...');
-    router.push({ name: 'DVerifyView' });
-    return;
-  }
-  await driverStore.fetchDriverData();
-});
-
-const driverName = computed(() => driverStore.driver.name || 'Driver');
-const profilePhoto = computed(() => driverStore.driver.profile_photo_url || 'https://via.placeholder.com/150');
-
 const items = ref([
-  { title: 'Home', icon: 'fas fa-home', to: { name: 'DHomeView' } },
-  { title: 'Dashboard', icon: 'fas fa-chart-line', to: { name: 'DHomeView' } },
-  { title: 'Events', icon: 'fas fa-users', to: { name: 'DEventView' } },
-  { title: 'Events Uploader', icon: 'fas fa-upload', to: { name: 'DEventUploadView' } }
+  {
+    title: 'Dashboard',
+    icon: 'fa-solid fa-chart-line',
+    to: { name: 'DDashboardView' },
+    component: defineAsyncComponent(() => import('@/views/DriverViews/DDashboardView.vue'))
+  },
+  {
+    title: 'Events',
+    icon: 'fa-solid fa-users',
+    to: { name: 'DEventView' },
+    component: defineAsyncComponent(() => import('@/views/DriverViews/DEventView.vue'))
+  },
+  {
+    title: 'Events Uploader',
+    icon: 'fa-solid fa-briefcase',
+    to: { name: 'DEventUploadView' },
+    component: defineAsyncComponent(() => import('@/views/DriverViews/DEventUploadView.vue'))
+  },
+  {
+    title: 'Events Suggestion',
+    icon: 'fa-solid fa-wand-sparkles',
+    to: { name: 'PSuggestionView' },
+    component: defineAsyncComponent(() => import('@/views/driverViews/PSuggestionView.vue'))
+  }
 ]);
 </script>
 
 <template>
-  <div class="flex h-screen w-screen">
+  <div class="flex h-screen relative">
     <!-- Sidebar -->
     <aside
-      class="w-64 bg-white shadow-lg fixed h-full z-50 transition-transform duration-300 lg:translate-x-0"
-      :class="{ 'transform -translate-x-full': !drawer, 'transform translate-x-0': drawer }"
+      class="w-64 bg-white z-40 transition-transform duration-300 lg:static lg:translate-x-0"
+      :class="{
+        'absolute inset-y-0 left-0 transform -translate-x-full': !drawer,
+        'absolute inset-y-0 left-0 transform translate-x-0': drawer
+      }"
     >
       <nav class="mt-10">
         <router-link
           v-for="(item, index) in items"
           :key="index"
           :to="item.to"
-          class="flex items-center p-4 hover:bg-gray-100 rounded"
+          class="flex items-center p-2 hover:bg-gray-100 rounded"
           @click="drawer = false"
         >
-          <i :class="item.icon" class="w-6 h-6 mr-3 text-gray-700"></i>
-          <span class="text-lg font-medium">{{ item.title }}</span>
+          <i :class="item.icon" class="w-5 h-5 mr-2 text-gray-700"></i>
+          <span>{{ item.title }}</span>
         </router-link>
       </nav>
     </aside>
 
-    <!-- Overlay for mobile -->
+    <!-- Backdrop for mobile view -->
     <div
       v-if="drawer"
-      class="fixed inset-0 bg-black opacity-50 z-40 lg:hidden"
+      class="fixed inset-0 bg-black opacity-50 z-30 lg:hidden"
       @click="toggleDrawer"
     ></div>
 
-    <!-- Main content -->
-    <div class="flex-1 flex flex-col ml-64 lg:ml-0">
-      <!-- Header -->
-      <header class="bg-white shadow-md flex items-center justify-between px-6 py-4 w-full fixed top-0 z-40">
-        <button class="p-2 focus:outline-none lg:hidden" @click="toggleDrawer">
-          <i class="fas fa-bars text-gray-700 text-xl"></i>
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+      <!-- Navbar -->
+      <header class="bg-white shadow-md flex items-center justify-between px-4 py-2">
+        <button
+          class="p-2 focus:outline-none lg:hidden"
+          @click="toggleDrawer"
+        >
+          <i class="fa-solid fa-bars w-6 h-6 text-gray-700"></i>
         </button>
-        <h1 class="text-2xl font-semibold">KARZO</h1>
-        <div class="relative">
-          <button @click="showDropdown = !showDropdown" class="p-2 flex items-center focus:outline-none">
-            <img :src="profilePhoto" class="w-10 h-10 rounded-full mr-2" />
-            <span class="font-medium text-lg">{{ driverName }}</span>
+        <h1 class="text-lg font-semibold">Karzo</h1>
+        <div class="relative flex items-center gap-2">
+          <!-- Full-Screen Button -->
+          <button @click="toggleFullScreen">
+            <i :class="isFullScreen ? 'fa-solid fa-compress' : 'fa-solid fa-expand'"></i>
           </button>
+
+          <!-- Dropdown Button -->
+          <button @click="showDropdown = !showDropdown" class="p-2 focus:outline-none flex items-center gap-1 dropdown-menu">
+            <img
+              :src="driver?.profile_photo || 'https://imgs.search.brave.com/TvEa5hDYoEHqMQXTiWO9VZK3Ow2GKxoSnIcxFb1IrBg/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNDcw/MTAwODQ4L3ZlY3Rv/ci9tYWxlLXByb2Zp/bGUtaWNvbi13aGl0/ZS1vbi10aGUtYmx1/ZS1iYWNrZ3JvdW5k/LmpwZz9zPTYxMng2/MTImdz0wJms9MjAm/Yz0yWjNBczdLZEhx/U0tCNlVEQnBTSWJN/a3dPZ1lRdGJoU1dy/RjFaSFg1MDVFPQ'"
+              alt="Profile Photo"
+              class="w-8 h-8 rounded-full"
+            />
+            {{ driver.name }}
+          </button>
+
+          <!-- Dropdown Menu -->
           <div
             v-if="showDropdown"
-            class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg"
+            class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg dropdown-menu"
           >
-            <div class="p-3 hover:bg-gray-100 cursor-pointer flex items-center">
-              <i class="fas fa-cog w-5 h-5 mr-2 text-gray-700"></i>
+            <div class="p-2 hover:bg-gray-100 cursor-pointer flex items-center">
+              <i class="fa-solid fa-gear w-5 h-5 mr-2 text-gray-700"></i>
               <span>Settings</span>
             </div>
-            <div class="p-3 hover:bg-gray-100 cursor-pointer flex items-center">
-              <i class="fas fa-sign-out-alt w-5 h-5 mr-2 text-gray-700"></i>
+            <div class="p-2 hover:bg-gray-100 cursor-pointer flex items-center">
+              <i class="fa-solid fa-right-from-bracket w-5 h-5 mr-2 text-gray-700"></i>
               <span>Logout</span>
             </div>
           </div>
         </div>
       </header>
 
-      <!-- Main content area -->
-      <main class="flex-1 p-6 bg-gray-200 mt-16 overflow-auto">
+      <!-- Content -->
+      <main class="flex-1 p-6 bg-gray-200">
         <slot></slot>
       </main>
     </div>
@@ -99,13 +168,7 @@ const items = ref([
 </template>
 
 <style scoped>
-/* Sidebar styles for mobile */
-@media (max-width: 1024px) {
-  aside {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-  }
+body {
+  font-family: 'Inter', sans-serif;
 }
 </style>

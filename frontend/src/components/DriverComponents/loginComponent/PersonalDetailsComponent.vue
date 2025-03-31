@@ -2,15 +2,14 @@
   <div class="p-6 bg-white rounded-lg shadow-md">
     <h2 class="text-2xl font-semibold mb-6 text-gray-800">Personal Details</h2>
 
-    <!-- Photo field -->
+    <!-- Profile Photo Upload -->
     <div class="mb-6">
-      <label for="profilePhoto" class="block text-sm font-medium text-gray-700 mb-2">Profile Photo</label>
-      <input
-        type="file"
-        id="profilePhoto"
-        accept="image/*"
+      <label class="block text-sm font-medium text-gray-700 mb-2">Profile Photo</label>
+      <input 
+        type="file" 
+        accept="image/*" 
         @change="handleProfilePhotoUpload"
-        class="mt-1 p-3 border rounded-md w-full focus:ring-2 focus:ring-green-200"
+        class="p-3 border rounded-md w-full focus:ring-2 focus:ring-green-200"
       />
       <span v-if="!isProfilePhotoValid" class="text-sm text-red-500">Profile Photo is required</span>
     </div>
@@ -27,92 +26,29 @@
       <span v-if="!isNameValid" class="text-sm text-red-500">Name is required</span>
     </div>
 
-    <!-- Age Field -->
-    <div class="mb-6">
-      <label for="age" class="block text-sm font-medium text-gray-700 mb-2">Age</label>
+    <!-- Other Fields -->
+    <div v-for="(field, key) in fieldMappings" :key="key" class="mb-6">
+      <label :for="key" class="block text-sm font-medium text-gray-700 mb-2">{{ field.label }}</label>
       <input
-        type="number"
-        id="age"
-        v-model="personalDetails.age"
+        v-if="field.type !== 'textarea' && field.type !== 'select'"
+        :type="field.type"
+        :id="key"
+        v-model="personalDetails[key]"
         class="mt-1 p-3 border rounded-md w-full focus:ring-2 focus:ring-green-200"
       />
-      <span v-if="!isAgeValid" class="text-sm text-red-500">Age is required</span>
-    </div>
-
-    <!-- Birth Date Field -->
-    <div class="mb-6">
-      <label for="birth_date" class="block text-sm font-medium text-gray-700 mb-2">Birth Date</label>
-      <input
-        type="date"
-        id="birth_date"
-        v-model="personalDetails.birth_date"
-        class="mt-1 p-3 border rounded-md w-full focus:ring-2 focus:ring-green-200"
-      />
-      <span v-if="!isBirthdateValid" class="text-sm text-red-500">Birth Date is required</span>
-    </div>
-
-    <!-- Gender Field -->
-    <div class="mb-6">
-      <label for="gender" class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
-      <select
-        id="gender"
-        v-model="personalDetails.gender"
-        class="mt-1 p-3 border rounded-md w-full focus:ring-2 focus:ring-green-200"
-      >
-        <option value="male">Male</option>
-        <option value="female">Female</option>
-        <option value="other">Other</option>
-      </select>
-    </div>
-
-    <!-- Phone Number Field -->
-    <div class="mb-6">
-      <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-      <input
-        type="tel"
-        id="phone"
-        v-model="personalDetails.phone"
-        class="mt-1 p-3 border rounded-md w-full focus:ring-2 focus:ring-green-200"
-      />
-      <span v-if="!isPhoneValid" class="text-sm text-red-500">Phone Number is required</span>
-    </div>
-
-    <!-- Location Field -->
-    <div class="mb-6">
-      <label for="location" class="block text-sm font-medium text-gray-700 mb-2">Location</label>
-      <input
-        type="text"
-        id="location"
-        v-model="personalDetails.location"
-        class="mt-1 p-3 border rounded-md w-full focus:ring-2 focus:ring-green-200"
-      />
-      <span v-if="!isLocationValid" class="text-sm text-red-500">Location is required</span>
-    </div>
-
-    <!-- Pincode Field -->
-    <div class="mb-6">
-      <label for="pincode" class="block text-sm font-medium text-gray-700 mb-2">Pincode</label>
-      <input
-        type="text"
-        id="pincode"
-        v-model="personalDetails.pincode"
-        class="mt-1 p-3 border rounded-md w-full focus:ring-2 focus:ring-green-200"
-      />
-      <span v-if="!isPincodeValid" class="text-sm text-red-500">Pincode is required</span>
-    </div>
-
-    <!-- Address Field -->
-    <div class="mb-6">
-      <label for="address" class="block text-sm font-medium text-gray-700 mb-2">Address</label>
       <textarea
-        id="address"
-        v-model="personalDetails.address"
+        v-else-if="field.type === 'textarea'"
+        :id="key"
+        v-model="personalDetails[key]"
         class="mt-1 p-3 border rounded-md w-full focus:ring-2 focus:ring-green-200"
       ></textarea>
-      <span v-if="!isAddressValid" class="text-sm text-red-500">Address is required</span>
+      <select v-else :id="key" v-model="personalDetails[key]" class="mt-1 p-3 border rounded-md w-full focus:ring-2 focus:ring-green-200">
+        <option v-for="option in field.options" :key="option" :value="option">{{ option }}</option>
+      </select>
+      <span v-if="!validations[key]" class="text-sm text-red-500">{{ field.error }}</span>
     </div>
 
-    <!-- Email Field (Pre-filled & Disabled) -->
+    <!-- Email (Pre-filled & Disabled) -->
     <div class="mb-6">
       <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
       <input
@@ -133,9 +69,11 @@
 
 <script setup>
 import { reactive, computed, onMounted } from 'vue';
-import { supabase } from '@/utils/supabase';
+import { useRoute } from 'vue-router';
+import api from '@/api';
 
-const emit = defineEmits(['next', 'update:personalDetails']);
+const route = useRoute();
+const emit = defineEmits(['next', 'update:personalDetails', 'update:profilePhoto']);
 
 const personalDetails = reactive({
   name: '',
@@ -146,62 +84,65 @@ const personalDetails = reactive({
   location: '',
   pincode: '',
   address: '',
-  email: '',
-  profilePhoto: null, // Store the selected image file
+  email: ''
 });
 
-// Fetch the current user's email and store in sessionStorage
+const fieldMappings = {
+  age: { label: 'Age', type: 'number', error: 'Age is required' },
+  birth_date: { label: 'Birth Date', type: 'date', error: 'Birth Date is required' },
+  gender: { label: 'Gender', type: 'select', options: ['male', 'female', 'other'] },
+  phone: { label: 'Phone Number', type: 'tel', error: 'Phone Number is required' },
+  location: { label: 'Location', type: 'text', error: 'Location is required' },
+  pincode: { label: 'Pincode', type: 'text', error: 'Pincode is required' },
+  address: { label: 'Address', type: 'textarea', error: 'Address is required' },
+};
+
+const validations = computed(() => {
+  return {
+    age: personalDetails.age !== null && personalDetails.age > 0,
+    birth_date: !!personalDetails.birth_date,
+    phone: !!personalDetails.phone,
+    location: !!personalDetails.location,
+    pincode: !!personalDetails.pincode,
+    address: !!personalDetails.address,
+  };
+});
+
 onMounted(async () => {
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data?.user) {
-    console.error("User not found:", error);
-  } else {
-    personalDetails.email = data.user.email;
-    sessionStorage.setItem('userEmail', data.user.email); // ✅ Store email for later use
+  const token = route.query.token;
+  if (!token) {
+    console.error("No registration token found");
+    return;
+  }
+
+  try {
+    const response = await api.post("/api/driver/validate-token/", { token });
+    personalDetails.email = response.data.email;
+  } catch (err) {
+    console.error("Token validation failed:", err);
   }
 });
 
-// Handle profile photo upload
+const isProfilePhotoValid = computed(() => true); // Remove this if not using profile photo validation here
+const isNameValid = computed(() => personalDetails.name.trim() !== '');
+const isFormValid = computed(() => 
+  isNameValid.value && 
+  Object.values(validations.value).every(Boolean)
+);
+
 const handleProfilePhotoUpload = (event) => {
   const file = event.target.files[0];
   if (file) {
-    personalDetails.profilePhoto = file;
+    emit('update:profilePhoto', file);
   }
 };
 
-// Validation computed properties
-const isNameValid = computed(() => personalDetails.name.trim() !== '');
-const isAgeValid = computed(() => personalDetails.age !== null && personalDetails.age > 0);
-const isBirthdateValid = computed(() => personalDetails.birth_date !== '');
-const isPhoneValid = computed(() => personalDetails.phone.trim() !== '');
-const isLocationValid = computed(() => personalDetails.location.trim() !== '');
-const isPincodeValid = computed(() => personalDetails.pincode.trim() !== '');
-const isAddressValid = computed(() => personalDetails.address.trim() !== '');
-const isEmailValid = computed(() => personalDetails.email.trim() !== '');
-const isProfilePhotoValid = computed(() => personalDetails.profilePhoto !== null); // Validate profile photo
-
-// Check if the entire form is valid
-const isFormValid = computed(() => {
-  return (
-    isNameValid.value &&
-    isAgeValid.value &&
-    isBirthdateValid.value &&
-    isPhoneValid.value &&
-    isLocationValid.value &&
-    isPincodeValid.value &&
-    isAddressValid.value &&
-    isEmailValid.value &&
-    isProfilePhotoValid.value // Include profile photo validation
-  );
-});
-
-// Validate and proceed to the next step
 const validateAndNext = () => {
   if (isFormValid.value) {
     emit('update:personalDetails', personalDetails);
     emit('next');
   } else {
-    alert('Please fill all the fields before proceeding.');
+    alert('Please fill all required fields before proceeding.');
   }
 };
 </script>

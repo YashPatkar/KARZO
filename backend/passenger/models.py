@@ -1,9 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils import timezone
+from datetime import datetime, timedelta, timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
-import uuid
-from django.core.validators import MinValueValidator, MaxValueValidator
+
 class RegistrationToken(models.Model):
     """
     Model to store registration tokens for passenger sign-up.
@@ -18,14 +17,14 @@ class RegistrationToken(models.Model):
         Override the save method to set expires_at to 5 hours from the current time.
         """
         if not self.expires_at:  # Set expires_at only if it's not already set
-            self.expires_at = timezone.now() + timezone.timedelta(hours=5)
+            self.expires_at = datetime.now(timezone.utc) + timedelta(hours=5)
         super().save(*args, **kwargs)
 
     def is_expired(self):
         """
         Check if the token has expired.
         """
-        return timezone.now() > self.expires_at
+        return datetime.now(timezone.utc) > self.expires_at
 
     def __str__(self):
         return f"Token for {self.email} (Expires: {self.expires_at})"

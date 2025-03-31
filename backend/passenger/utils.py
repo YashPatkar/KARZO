@@ -10,10 +10,10 @@ def generate_otp():
 def send_email(email):
     """Generate a unique registration link and send it via email"""
     token = str(uuid.uuid4())  # Generate a unique token
-
+    print(email, token)
     # Save token to the database
     RegistrationToken.objects.update_or_create(email=email, defaults={"token": token})
-
+    print('Generated token:', token)
     registration_link = f"{settings.FRONTEND_URL}/PRegisterCardExtendedView?token={token}"
 
     subject = "KARZO Registration Link."

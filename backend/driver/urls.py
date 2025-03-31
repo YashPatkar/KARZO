@@ -1,26 +1,19 @@
 from django.urls import path
 from driver.views import (
+    check_otp,
+    check_user,
     driver_register,
     event_submit,
-    update_driver_profile,
     resend_otp,
-    CheckVerifications,
-    send_driver_data,
+    validate_token,
 )
 
 urlpatterns = [
-    path("register/", driver_register, name="register_driver"),
-    path(
-        "<str:driver_uuid>/update-profile/",
-        update_driver_profile,
-        name="update_driver_profile",
-    ),
-    path(
-        "<str:email>/check-verifications/",
-        CheckVerifications.as_view(),
-        name="CheckVerifications",
-    ),
-    path("<str:email>/resend-otp/", resend_otp, name="resend_otp"),
-    path("<str:email>/driver-data/", send_driver_data, name="send_driver_data"),
-    path("submit-event/", event_submit, name="submit-event"),
+        path("validate-token/", validate_token, name="validate_token"),
+        path("register/", driver_register, name="register_driver"),
+        path("check-user/", check_user.as_view(), name="check_user"),
+        path("check-otp/", check_otp, name="check_otp"),
+        path("register/", driver_register, name="register_driver"),
+        path("<str:email>/resend-otp/", resend_otp, name="resend_otp"),
+        path("submit-event/", event_submit, name="submit-event"),
 ]

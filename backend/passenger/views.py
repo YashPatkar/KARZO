@@ -15,7 +15,7 @@ from django.contrib.auth.models import User
 from .models import RegistrationToken, PassengerUser, PersonalDetails
 from .utils import send_email
 from core.models import otpData
-from driver.serializers import EventSerializer
+from core.serializers import EventSerializer
 
 
 @api_view(["POST"])
@@ -231,4 +231,4 @@ def event_submit(request):
         return Response(status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         print("Error2222222: ", e)
-        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST)

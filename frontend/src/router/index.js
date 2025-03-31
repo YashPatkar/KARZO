@@ -73,6 +73,11 @@ const DriverRoutes = [
     path: '/DVerifyView',
     name: 'DVerifyView',
     component: () => import('../views/DriverViews/LoginViews/DVerifyView.vue')
+  },
+  {
+    path: '/DDashboardView',
+    name: 'DDashboardView',
+    component: () => import('../views/DriverViews/DDashboardView.vue')
   }
 ]
 

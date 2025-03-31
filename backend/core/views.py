@@ -4,9 +4,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from core.models import Event
-from driver.serializers import EventSerializer
+from .serializers import EventSerializer
 from .models import Event, EventLike
-from django.core.exceptions import ObjectDoesNotExist
 
 @api_view(['GET'])
 def user_events(request):

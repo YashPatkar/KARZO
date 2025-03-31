@@ -59,7 +59,7 @@ const cooldown = ref(0);
 onMounted(() => {
   email.value = sessionStorage.getItem('driver_email') || '';
   if (!email.value) {
-    router.push({ name: 'DRegisterView' });
+    router.push({ name: 'PRegisterView' });
   }
 });
 
@@ -71,12 +71,10 @@ const verifyOtp = async () => {
   errorMessage.value = '';
 
   try {
-    const response = await api.post(`/api/driver/${email.value}/check-verifications/`, { otp: otp.value });
+    const response = await api.post(`/api/driver/check-otp/`, { otp: otp.value, email: email.value });
 
     if (response.status === 200) {
-      driverStore.setEmail(email.value);
-      await driverStore.fetchDriverData();
-      router.push({ name: 'DHomeView' });
+      router.push({ name: 'PEventView' });
     } else {
       errorMessage.value = 'Invalid OTP. Please try again.';
     }
@@ -95,7 +93,7 @@ const resendOtp = async () => {
   errorMessage.value = '';
 
   try {
-    const response = await api.post(`/api/driver/${email.value}/resend-otp/`);
+    const response = await api.post(`/api/driver/resend-otp/`);
 
     if (response.status === 200) {
       errorMessage.value = 'OTP has been resent. Please check your email.';

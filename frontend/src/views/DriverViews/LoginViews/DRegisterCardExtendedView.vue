@@ -1,169 +1,168 @@
-<template>
-  <div class="min-h-screen bg-gray-100 p-8">
-    <div v-if="currentStep === 1">
-      <PersonalDetailsComponent @next="nextStep" @update:personalDetails="updatePersonalDetails" />
-    </div>
-    <div v-else-if="currentStep === 2">
-      <VehicleRegistrationComponent @prev="prevStep" @submit="handleSubmit"
-        @update:vehicleDetails="updateVehicleDetails" />
-    </div>
-  </div>
-</template>
-
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router'; // Import Vue Router
-import { useDriverStore } from '@/stores/driverStore'; // Import driver store
-import api from '@/api';
-import { supabase } from "@/utils/supabase"; 
+import { onMounted, reactive, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import api from "@/api";
+import PersonalDetailsComponent from "@/components/DriverComponents/loginComponent/PersonalDetailsComponent.vue";
+import VehicleRegistrationComponent from "@/components/DriverComponents/loginComponent/VehicleRegistrationComponent.vue";
 
-import PersonalDetailsComponent from '@/components/DriverComponents/loginComponent/PersonalDetailsComponent.vue';
-import VehicleRegistrationComponent from '@/components/DriverComponents/loginComponent/VehicleRegistrationComponent.vue';
-
-const router = useRouter(); // Initialize Vue Router
-const driverStore = useDriverStore(); // Initialize driver store
-
+const route = useRoute();
+const router = useRouter();
+const token = ref(route.query.token);
+const email = ref("");
+const errorMessage = ref("");
+const isTokenValid = ref(false);
+const isLoading = ref(false);
+const profilePhoto = ref(null);  // This will store the File object
 const currentStep = ref(1);
-const storedEmail = ref('');
+
+const personalDetails = reactive({
+  name: "",
+  age: null,
+  gender: "male",
+  phone: "",
+  address: "",
+});
+
+const vehicleDetails = reactive({
+  vehicle_number: "",
+  vehicle_manufacturer: "",
+  vehicle_type: "bike",
+  vehicle_model: "",
+  vehicle_color: "",
+  vehicle_registration_number: "",
+  vehicle_registration_date: "",
+});
 
 onMounted(async () => {
-  // Refresh session after magic link login
-  const { error } = await supabase.auth.refreshSession();
-  if (error) {
-    console.error("Session refresh failed:", error);
+  if (!token.value) {
+    errorMessage.value = "Invalid link.";
+    return;
   }
 
-  // Get stored email from sessionStorage
-  storedEmail.value = sessionStorage.getItem('userEmail') || '';
+  try {
+    const response = await api.post("/api/driver/validate-token/", {
+      token: token.value,
+    });
+
+    email.value = response.data.email;
+    isTokenValid.value = true;
+  } catch (err) {
+    errorMessage.value = "Invalid or expired token.";
+  }
 });
 
+// Upload image to ImgBB - same as passenger
+const uploadImageToImgBB = async () => {
+  if (!profilePhoto.value) {
+    console.error("No profile photo to upload");
+    return null;
+  }
 
-const personalDetails = ref({
-  name: '',
-  age: null,
-  birth_date: '',
-  gender: 'male',
-  phone: '',
-  location: '',
-  pincode: '',
-  address: '',
-  email: '',
-  profilePhoto: null, // Store the selected image file
-});
+  const formData = new FormData();
+  formData.append("image", profilePhoto.value);
 
-const vehicleDetails = ref({
-  vehicle_number: '',
-  vehicle_manufacturer: '',
-  vehicle_type: 'bike',
-  vehicle_model: '',
-  vehicle_color: '',
-  vehicle_registration_date: '',
-});
+  try {
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMGBB_API_KEY}`, {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      return data.data.url;
+    }
+  } catch (error) {
+    console.error("Error uploading image:", error);
+  }
+
+  return null;
+};
 
 const nextStep = () => {
-  currentStep.value = 2;
+  // Validate personal details before proceeding
+  if (!personalDetails.name || !personalDetails.age || !personalDetails.phone || !personalDetails.address) {
+    alert("Please fill all required personal details");
+    return;
+  }
+  currentStep.value++;
 };
 
 const prevStep = () => {
-  currentStep.value = 1;
+  currentStep.value--;
 };
 
-const updatePersonalDetails = (details) => {
-  personalDetails.value = { ...personalDetails.value, ...details };
+const updatePersonalDetails = (updatedDetails) => {
+  Object.assign(personalDetails, updatedDetails);
 };
 
-const updateVehicleDetails = (details) => {
-  vehicleDetails.value = { ...vehicleDetails.value, ...details };
+const updateVehicleDetails = (updatedDetails) => {
+  Object.assign(vehicleDetails, updatedDetails);
 };
 
-const uploadImageToImgBB = async (file, email, driverUUID) => {
-  const formData = new FormData();
-  formData.append('image', file);
-  formData.append('name', `${email}_${driverUUID}_driver_image`);
-
-  try {
-    const apiKey = import.meta.env.VITE_IMGBB_API_KEY;
-    if (!apiKey) {
-      throw new Error('ImgBB API key is not set');
-    }
-    const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
-      method: 'POST',
-      body: formData,
-    });
-    const result = await response.json();
-    if (result.success) {
-      return result.data.url; // Return the image URL
-    } else {
-      throw new Error('Failed to upload image to ImgBB');
-    }
-  } catch (error) {
-    console.error('Error uploading image to ImgBB:', error);
-    throw error;
-  }
+// Handle profile photo update from child component
+const updateProfilePhoto = (file) => {
+  profilePhoto.value = file;
 };
 
 const handleSubmit = async () => {
+  if (!isTokenValid.value) {
+    errorMessage.value = "Token validation failed. Cannot proceed.";
+    return;
+  }
+
+  // Validate vehicle details
+  if (!vehicleDetails.vehicle_number || !vehicleDetails.vehicle_model) {
+    alert("Please fill in all required vehicle details.");
+    return;
+  }
+
+  isLoading.value = true;
+
   try {
-    if (personalDetails.value.email !== storedEmail.value) {
-      alert('Email verification failed!');
+    // Upload profile photo first
+    const profilePhotoUrl = await uploadImageToImgBB();
+
+    if (!profilePhotoUrl) {
+      alert("Failed to upload profile photo. Please try again.");
+      isLoading.value = false;
       return;
     }
 
-    const dataToSend = {
-      driver: {
-        email: personalDetails.value.email,
-      },
-      personal_details: {
-        name: personalDetails.value.name,
-        age: personalDetails.value.age,
-        birth_date: personalDetails.value.birth_date,
-        gender: personalDetails.value.gender,
-        phone: personalDetails.value.phone,
-        location: personalDetails.value.location,
-        pincode: personalDetails.value.pincode,
-        address: personalDetails.value.address,
-      },
-      vehicle_details: {
-        vehicle_number: vehicleDetails.value.vehicle_number,
-        vehicle_manufacturer: vehicleDetails.value.vehicle_manufacturer,
-        vehicle_type: vehicleDetails.value.vehicle_type,
-        vehicle_model: vehicleDetails.value.vehicle_model,
-        vehicle_color: vehicleDetails.value.vehicle_color,
-        vehicle_registration_date: vehicleDetails.value.vehicle_registration_date,
-      },
-    };
-
-    const response = await api.post('/api/driver/register/', dataToSend);
-    console.log('Driver registration response:', response);
+    const response = await api.post("/api/driver/register/", {
+      ...personalDetails,
+      ...vehicleDetails,
+      email: email.value,
+      token: token.value,
+      profile_photo: profilePhotoUrl,
+    });
 
     if (response.status === 201) {
-      const driverUUID = String(response.data.driver_uuid);
-
-      // Upload profile photo to ImgBB if it exists
-      if (personalDetails.value.profilePhoto) {
-        const imageUrl = await uploadImageToImgBB(personalDetails.value.profilePhoto, personalDetails.value.email, driverUUID);
-
-        // Update driver profile with the image URL
-        const updateResponse = await api.patch(`/api/driver/${driverUUID}/update-profile/`, {
-          profile_photo_url: imageUrl,
-        });
-
-        if (updateResponse.status === 200) {  
-          driverStore.setEmail(personalDetails.value.email); // Store email in Pinia
-          await driverStore.fetchDriverData(); // Fetch driver data
-          router.push({ path: '/DHomeView' }); // Redirect to Home
-        } else {
-          throw new Error('Failed to update driver profile with image URL');
-        }
-      } else {
-        router.push({ path: '/DHomeView' });
-      }
-    } else {
-      throw new Error('Failed to register driver');
+      sessionStorage.setItem("driver_email", email.value);
+      router.push("/DEventView");
     }
   } catch (error) {
-    console.error('Error submitting form:', error);
-    alert('Registration failed. Please try again.');
+    alert(error.response?.data?.message || "An error occurred. Try again.");
+  } finally {
+    isLoading.value = false;
   }
 };
 </script>
+
+<template>
+  <div class="min-h-screen bg-gray-100 p-8">
+    <div v-if="currentStep === 1">
+      <PersonalDetailsComponent 
+        @next="nextStep" 
+        @update:personalDetails="updatePersonalDetails"
+        @update:profilePhoto="updateProfilePhoto"
+      />
+    </div>
+    <div v-else-if="currentStep === 2">
+      <VehicleRegistrationComponent 
+        @prev="prevStep" 
+        @submit="handleSubmit" 
+        @update:vehicleDetails="updateVehicleDetails" 
+      />
+    </div>
+  </div>
+</template>
