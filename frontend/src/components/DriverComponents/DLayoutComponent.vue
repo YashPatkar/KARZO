@@ -1,8 +1,8 @@
 <script setup>
-import { usedriverStore } from '@/stores/driverStore';
+import { useDriverStore } from '@/stores/driverStore';
 import { ref, defineAsyncComponent, onMounted, computed, onBeforeUnmount } from 'vue';
 
-const driverStore = usedriverStore();
+const driverStore = useDriverStore();
 onMounted(async () => {
   try {
     await driverStore.fetchdriverData();
@@ -75,12 +75,6 @@ const items = ref([
     to: { name: 'DEventUploadView' },
     component: defineAsyncComponent(() => import('@/views/DriverViews/DEventUploadView.vue'))
   },
-  {
-    title: 'Events Suggestion',
-    icon: 'fa-solid fa-wand-sparkles',
-    to: { name: 'PSuggestionView' },
-    component: defineAsyncComponent(() => import('@/views/driverViews/PSuggestionView.vue'))
-  }
 ]);
 </script>
 

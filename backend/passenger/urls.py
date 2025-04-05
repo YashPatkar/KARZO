@@ -5,6 +5,7 @@ from .views import (
     passenger_register,
     check_user,
     event_submit,
+    book_event,
 )
 
 urlpatterns = [
@@ -13,4 +14,5 @@ urlpatterns = [
     path("check-user/", check_user.as_view(), name="check_user"),
     path("check-otp/", check_otp, name="check_otp"),
     path("submit-event/", event_submit, name="submit_event"),
+    path('book-event/', book_event, name='book_event')
 ]

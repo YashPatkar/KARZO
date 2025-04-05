@@ -18,6 +18,7 @@ const handleRegister = async () => {
     if (response.status === 200) {
       // ✅ User exists → Send OTP and redirect to OTP verification page
       sessionStorage.setItem("driver_email", email.value);
+      console.log("Driver email:", email.value);
       router.push('/DVerifyView');
     } else if (response.status === 201) {
       // ✅ User does not exist → Send Registration Link

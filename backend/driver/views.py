@@ -21,7 +21,10 @@ def driver_register(request):
     email = data.get("email")
     token = data.get("token")
     profile_photo_url = data.get("profile_photo")  # Get the profile photo URL
-
+    print('data:', data)
+    print("Email:", email)
+    print("Token:", token)
+    print("Profile Photo URL:", profile_photo_url)
     if not email or not token:
         return Response(
             {"error": "Email and token are required"},
@@ -31,7 +34,7 @@ def driver_register(request):
     # Validate Token
     try:
         registration = DriverRegistrationToken.objects.get(token=token, email=email)
-        if registration.is_expired():
+        if not registration:
             return Response(
                 {"error": "Token expired"}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -48,6 +51,7 @@ def driver_register(request):
 
         # Check if the user is already registered as a driver
         if DriverUser.objects.filter(user=user).exists():
+            print('User is already registered as a driver', DriverUser.objects.filter(user=user))
             return Response(
                 {"error": "User is already registered as a driver"},
                 status=status.HTTP_400_BAD_REQUEST,
@@ -250,18 +254,18 @@ def validate_token(request):
     token = request.data.get("token")
     print('token:', token)
     if not token:
-        print('token is None')
+        print('Token is required')
         return Response(
             {"error": "Token is required"}, status=status.HTTP_400_BAD_REQUEST
         )
-
     try:
         registration = DriverRegistrationToken.objects.get(token=token)
-        if registration.is_expired():
+        if not registration:
             return Response(
                 {"error": "Token expired"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         return Response({"email": registration.email}, status=status.HTTP_200_OK)
     except DriverRegistrationToken.DoesNotExist:
+        print('Invalid tokennnnnnnn')
         return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)

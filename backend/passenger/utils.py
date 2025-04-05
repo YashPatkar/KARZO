@@ -8,22 +8,27 @@ def generate_otp():
     return randint(100000, 999999)
 
 def send_email(email):
-    """Generate a unique registration link and send it via email"""
-    token = str(uuid.uuid4())  # Generate a unique token
-    print(email, token)
-    # Save token to the database
-    RegistrationToken.objects.update_or_create(email=email, defaults={"token": token})
-    print('Generated token:', token)
-    registration_link = f"{settings.FRONTEND_URL}/PRegisterCardExtendedView?token={token}"
+    try:
 
-    subject = "KARZO Registration Link."
-    message = f"Click the link below to complete your registration:\n{registration_link}"
-    sender = settings.EMAIL_HOST_USER
-    recipients = [email]
+        """Generate a unique registration link and send it via email"""
+        token = str(uuid.uuid4())  # Generate a unique token
+        print(email, token)
+        # Save token to the database
+        RegistrationToken.objects.update_or_create(email=email, defaults={"token": token})
+        print('Generated token:', token)
+        registration_link = f"{settings.FRONTEND_URL}/PRegisterCardExtendedView?token={token}"
 
-    response = send_mail(subject, message, sender, recipients)
-    return response
+        subject = "KARZO Registration Link."
+        message = f"Click the link below to complete your registration:\n{registration_link}"
+        sender = settings.EMAIL_HOST_USER
+        recipients = [email]
 
+        response = send_mail(subject, message, sender, recipients)
+        print("Email Response:", response)
+        return response
+    except Exception as e:
+        print("Error sending email:", str(e))
+        return False
 
 def send_email_otp(email, otp):
     subject = "KARZO Email OTP"

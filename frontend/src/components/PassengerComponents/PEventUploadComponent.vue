@@ -4,6 +4,7 @@ import { usePassengerStore } from '@/stores/passengerStore'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { getGroqChatCompletion } from "@/utils/EventDescription_groq"
+import { debounce } from 'lodash'
 
 const passengerStore = usePassengerStore()
 const loading = ref(false)
@@ -98,6 +99,8 @@ const fetchLocationSuggestions = async () => {
     console.error('Location search error:', error)
   }
 }
+
+const debounceFetchLocationSuggestions = debounce(fetchLocationSuggestions, 500)
 
 // Map functions
 const initMap = () => {
@@ -254,7 +257,7 @@ const submitEvent = () => {
             <input 
               v-model="locationQuery"
               type="text"
-              @input="fetchLocationSuggestions"
+              @input="debounceFetchLocationSuggestions"
               class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none pr-10"
               required
             />

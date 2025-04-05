@@ -45,9 +45,9 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/api';
-import { useDriverStore } from '@/stores/driverStore';
+import { usePassengerStore } from '@/stores/passengerStore';
 
-const driverStore = useDriverStore();
+const passengerStore = usePassengerStore();
 const otp = ref('');
 const isLoading = ref(false);
 const isResending = ref(false);

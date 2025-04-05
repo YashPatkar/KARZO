@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useDriverStore } from '@/stores/driverStore'
+import { debounce } from 'lodash'
 
 const driverStore = useDriverStore()
 const loading = ref(false)
@@ -51,6 +52,8 @@ const fetchLocationSuggestions = async () => {
         console.error('Error fetching location suggestions:', error)
     }
 }
+
+const debounceFetchLocationSuggestions = debounce(fetchLocationSuggestions, 500)
 
 // Watch for location input changes
 watch(locationQuery, fetchLocationSuggestions)
@@ -126,7 +129,7 @@ const submitEvent = () => {
                     <input 
                         v-model="locationQuery"
                         type="text"
-                        @input="fetchLocationSuggestions"
+                        @input="debounceFetchLocationSuggestions"
                         class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
                         required
                     />

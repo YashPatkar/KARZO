@@ -65,12 +65,12 @@ class VehicleDetails(models.Model):
     Model to store vehicle details of the driver.
     """
     driver = models.OneToOneField(DriverUser, on_delete=models.CASCADE, related_name="vehicle_details")
-    vehicle_number = models.CharField(max_length=20, unique=True, default="UNKNOWN")
+    vehicle_number = models.CharField(max_length=20, default="UNKNOWN")
     vehicle_manufacturer = models.CharField(max_length=50, default="Unknown Manufacturer")
     vehicle_type = models.CharField(max_length=50, default="Unknown Type")
     vehicle_model = models.CharField(max_length=50, default="Unknown Model")
     vehicle_color = models.CharField(max_length=20, default="Unknown Color")
-    registration_number = models.CharField(max_length=50, unique=True, default="UNKNOWN")
+    registration_number = models.CharField(max_length=50, default="UNKNOWN")
     vehicle_registration_date = models.DateField(null=True, blank=True)  # Allow null values
 
     def __str__(self):

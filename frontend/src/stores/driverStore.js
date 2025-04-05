@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import api from '@/api';
 import { useRouter } from 'vue-router';
 
-export const usedriverStore = defineStore('driver', () => {
+export const useDriverStore = defineStore('driver', () => {
   const driver = ref({}); // Store driver data
   const router = useRouter();
   const email = ref(sessionStorage.getItem('driver_email'));

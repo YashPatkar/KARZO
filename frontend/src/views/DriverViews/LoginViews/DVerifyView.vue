@@ -59,7 +59,7 @@ const cooldown = ref(0);
 onMounted(() => {
   email.value = sessionStorage.getItem('driver_email') || '';
   if (!email.value) {
-    router.push({ name: 'PRegisterView' });
+    router.push({ name: 'DRegisterView' });
   }
 });
 
@@ -74,7 +74,7 @@ const verifyOtp = async () => {
     const response = await api.post(`/api/driver/check-otp/`, { otp: otp.value, email: email.value });
 
     if (response.status === 200) {
-      router.push({ name: 'PEventView' });
+      router.push({ name: 'DEventView' });
     } else {
       errorMessage.value = 'Invalid OTP. Please try again.';
     }

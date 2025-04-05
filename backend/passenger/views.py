@@ -27,23 +27,25 @@ def passenger_register(request):
     email = data.get("email")
     token = data.get("token")
     profile_photo_url = data.get("profile_photo")  # Get the profile photo URL
-
+    print(data)
+    print("Email:", email)
+    print("Token:", token)
+    print("Profile Photo URL:", profile_photo_url)
     if not email or not token:
         return Response(
             {"error": "Email and token are required"},
             status=status.HTTP_400_BAD_REQUEST,
         )
-
     # Validate Token
     try:
         registration = RegistrationToken.objects.get(token=token, email=email)
-        if registration.is_expired():
+        if not registration:
             return Response(
-                {"error": "Token expired"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Token expired"}, status=status.HTTP_400_BAD_REQUEST,
             )
     except RegistrationToken.DoesNotExist:
         return Response(
-            {"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST
+            {"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST,
         )
 
     try:
@@ -93,21 +95,29 @@ def validate_token(request):
     Validate the token provided.
     """
     token = request.data.get("token")
+    print("Token is: ", token)
     if not token:
+        print("Token is missing")
         return Response(
-            {"error": "Token is required"}, status=status.HTTP_400_BAD_REQUEST
+            {"error": "Token is required"}, status=status.HTTP_400_BAD_REQUEST,
         )
 
     try:
-        registration = RegistrationToken.objects.get(token=token)
-        if registration.is_expired():
+        registration = RegistrationToken.objects.filter(token=token).first()
+        print("Registration token exists: ", registration)
+        print('======')
+        if not registration:
+            print("Token does not exist")
             return Response(
-                {"error": "Token expired"}, status=status.HTTP_400_BAD_REQUEST
+                {"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST,
             )
-
-        return Response({"email": registration.email}, status=status.HTTP_200_OK)
+        if registration:
+            return Response({"email": registration.email}, status=status.HTTP_200_OK)
+        
     except RegistrationToken.DoesNotExist:
-        return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+        print('------')
+        print("Token does not exist")
+        return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST,)
 
 
 class check_user(APIView):
@@ -118,7 +128,7 @@ class check_user(APIView):
             print("email is: ", email)
             if not email:
                 return Response(
-                    {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST
+                    {"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST,
                 )
 
             # Fetch PassengerUser object
@@ -164,7 +174,7 @@ class check_user(APIView):
         email = request.data.get("email")
         if not email:
             return Response(
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
         try:
             if PassengerUser.objects.filter(email=email).exists():
@@ -183,7 +193,7 @@ class check_user(APIView):
                     )
                 else:
                     return Response(
-                        status=status.HTTP_400_BAD_REQUEST
+                        status=status.HTTP_400_BAD_REQUEST,
                     )
             else:
                 # Send registration link to the user
@@ -192,7 +202,7 @@ class check_user(APIView):
                     return Response(status=status.HTTP_201_CREATED)
                 return Response(
                     {"message": "User does not exist"},
-                    status=status.HTTP_400_BAD_REQUEST,
+                    status=status.HTTP_304_NOT_MODIFIED,
                 )
         except Exception as e:
             return Response(
@@ -209,17 +219,18 @@ def check_otp(request):
     email = request.data.get("email")
     otp = request.data.get("otp")
     if not email or not otp:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_304_NOT_MODIFIED)
     try:
         otp_data = otpData.objects.get(email=email, otp=otp)
         if otp_data.is_expired():
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_304_NOT_MODIFIED)
         return Response(status=status.HTTP_200_OK)
     except otpData.DoesNotExist:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_304_NOT_MODIFIED)
 
 @api_view(['POST'])
 def event_submit(request):
+
     try:
         data = request.data
         print('data:', data)
@@ -228,7 +239,17 @@ def event_submit(request):
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
         print("Validation errors:", serializer.errors)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_304_NOT_MODIFIED)
     except Exception as e:
         print("Error2222222: ", e)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_304_NOT_MODIFIED)
+    
+@api_view(['POST'])
+def book_event(request):
+    try:
+        data = request.data
+        print('data:', data)
+        return Response(status=status.HTTP_201_CREATED)
+    except Exception as e:
+        print("Error: ", e)
+        return Response(status=status.HTTP_304_NOT_MODIFIED)
