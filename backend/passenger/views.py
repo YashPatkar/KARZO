@@ -230,7 +230,6 @@ def check_otp(request):
 
 @api_view(['POST'])
 def event_submit(request):
-
     try:
         data = request.data
         print('data:', data)
@@ -239,10 +238,10 @@ def event_submit(request):
             serializer.save()
             return Response(status=status.HTTP_201_CREATED)
         print("Validation errors:", serializer.errors)
-        return Response(status=status.HTTP_304_NOT_MODIFIED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
-        print("Error2222222: ", e)
-        return Response(status=status.HTTP_304_NOT_MODIFIED)
+        print("Error: ", e)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
     
 @api_view(['POST'])
 def book_event(request):

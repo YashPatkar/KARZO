@@ -75,6 +75,19 @@ const items = ref([
     to: { name: 'DEventUploadView' },
     component: defineAsyncComponent(() => import('@/views/DriverViews/DEventUploadView.vue'))
   },
+  {
+    title: 'Request',
+    icon: 'fa-solid fa-bell',
+    to: { name: 'DRequestView' },
+    component: defineAsyncComponent(() => import('@/views/DriverViews/DRequestView.vue'))
+  },
+
+  {
+    title: 'History',
+    icon: 'fa-solid fa-clock-rotate-left',
+    to: { name: 'DHistoryView' },
+    component: defineAsyncComponent(() => import('@/views/DriverViews/DHistoryView.vue'))
+  }
 ]);
 </script>
 
@@ -88,12 +101,17 @@ const items = ref([
         'absolute inset-y-0 left-0 transform translate-x-0': drawer
       }"
     >
-      <nav class="mt-10">
+      <nav class="p-2 h-full">
+        <header>
+          <div class="flex items-center justify-between p-4 border-b">
+            <h2 class="text-lg font-semibold">Karzo</h2>
+          </div>
+        </header>
         <router-link
           v-for="(item, index) in items"
           :key="index"
           :to="item.to"
-          class="flex items-center p-2 hover:bg-gray-100 rounded"
+            :class="['flex items-center p-3 hover:bg-gray-100 rounded active:bg-gray-100', { 'bg-gray-100': $route.name === item.to.name }]"
           @click="drawer = false"
         >
           <i :class="item.icon" class="w-5 h-5 mr-2 text-gray-700"></i>
@@ -119,7 +137,9 @@ const items = ref([
         >
           <i class="fa-solid fa-bars w-6 h-6 text-gray-700"></i>
         </button>
-        <h1 class="text-lg font-semibold">Karzo</h1>
+        <h1 class="text-lg font-semibold">
+          {{ items.find(item => item.to.name === $route.name)?.title || $route.name }}
+        </h1>
         <div class="relative flex items-center gap-2">
           <!-- Full-Screen Button -->
           <button @click="toggleFullScreen">

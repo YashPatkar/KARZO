@@ -14,6 +14,8 @@ class Event(models.Model):
     time = models.TimeField()
     location = models.CharField(max_length=300)
     description = models.TextField()
+    latitude= models.FloatField(null=True, blank=True) # Optional field for latitude
+    longitude= models.FloatField(null=True, blank=True)  # Optional field for longitude
     user_type = models.CharField(max_length=50, choices=[('driver', 'Driver'), ('passenger', 'Passenger')])  
     created_at = models.DateTimeField(auto_now_add=True)
 

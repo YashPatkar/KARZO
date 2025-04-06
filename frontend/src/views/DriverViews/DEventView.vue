@@ -51,7 +51,7 @@
               <span 
                 class="flex items-center gap-1 font-bold text-md cursor-pointer"
                 :class="{ 'text-red-500': event.liked }"
-                @click="toggleLike(event)"
+                @click="toggleLike(event.id)"
               >
                 <i 
                   class="fa-regular fa-heart text-xl" 
@@ -116,7 +116,6 @@ import { ref, computed, onMounted } from 'vue';
 import DLayoutComponent from '@/components/DriverComponents/DLayoutComponent.vue';
 import api from '@/api';
 
-
 const events = ref([]);
 const search = ref('');
 const selectedEvent = ref(null);
@@ -127,14 +126,7 @@ const showPopup = ref(false);
 
 const availableTimes = ['10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'];
 
-onMounted(async () => {
-  try {
-    const response = await api.get('/api/core/events/');
-    events.value = response.data;
-  } catch (error) {
-    console.error('Error fetching events:', error);
-  }
-});
+
 
 const filteredEvents = computed(() => {
   return events.value.filter(event => 
@@ -185,17 +177,53 @@ const applyForRide = async () => {
   //   alert('Failed to submit application. Please try again.');
   // }
 };
-
-const toggleLike = async (event) => {
+console.log('Driver email:', sessionStorage.getItem('driver_email'))
+const toggleLike = async (eventId) => {
   try {
-    const response = await api.post(`/api/core/events/${event.id}/like/`, {
-      email: event.email,
+    const response = await api.post(`/api/core/events/${eventId}/like/`, {
+      email: sessionStorage.getItem('driver_email'),
     });
 
-    event.liked = response.data.liked;
-    event.like_count = response.data.like_count;
+
+    // Update local like count and UI
+    const updatedEvent = events.value.find(event => event.id === eventId);
+    if (updatedEvent) {
+      updatedEvent.like_count = response.data.like_count;
+      updatedEvent.liked = response.data.liked;
+    }
   } catch (error) {
-    console.error("Error toggling like:", error);
+    console.error('Error toggling like:', error);
   }
 };
+
+
+onMounted(async () => {
+  try {
+    const response = await api.get('/api/core/events/')
+    events.value = response.data
+    console.log('Fetched events:', events.value)
+
+    // Initial like count load
+    await updateLikeCounts()
+
+    // Set up polling for real-time like updates every 5 seconds
+    setInterval(updateLikeCounts, 5000)
+  } catch (error) {
+    console.error('Error fetching events:', error)
+  }
+})
+
+// Reusable function to update like counts for all events
+const updateLikeCounts = async () => {
+  for (const event of events.value) {
+    try {
+      const likeResponse = await api.get(`/api/core/events/${event.id}/like-count/`)
+      event.like_count = likeResponse.data.like_count || 0
+    } catch (likeError) {
+      console.error(`Error fetching like count for event ${event.id}:`, likeError)
+    }
+  }
+}
+
+
 </script>

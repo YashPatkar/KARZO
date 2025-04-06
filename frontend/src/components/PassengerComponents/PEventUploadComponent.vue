@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, nextTick, watch } from 'vue'
 import { usePassengerStore } from '@/stores/passengerStore'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -10,6 +10,8 @@ const passengerStore = usePassengerStore()
 const loading = ref(false)
 const generatingDescription = ref(false)
 
+
+
 // Compute dates
 const today = new Date()
 const formattedToday = computed(() => today.toISOString().split('T')[0])
@@ -18,30 +20,21 @@ const formattedMaxDate = computed(() => {
   maxDate.setFullYear(today.getFullYear() + 1)
   return maxDate.toISOString().split('T')[0]
 })
-
+console.log(passengerStore.passenger?.name, passengerStore.passenger?.email)
 // Form data
 const eventForm = ref({
-  name: passengerStore.name?.split(' ')[0] || '',
-  email: passengerStore.passenger?.email || '',
-  event_name: '',
-  date: '',
-  time: '',
-  location: '',
-  description: '',
-  user_type: 'passenger',
+    name: passengerStore.passenger?.name || '',
+    email: passengerStore.passenger?.email || '',
+    event_name: '',
+    date: '',
+    time: '',
+    location: '',
+    description: '',
+    latitude: null,
+    longitude: null,
+    user_type: 'passenger',
 })
 
-// Watch for changes in passengerStore
-watch(
-  () => passengerStore.passenger,
-  (newPassenger) => {
-    if (newPassenger) {
-      eventForm.value.name = newPassenger.name?.split(' ')[0] || ''
-      eventForm.value.email = newPassenger.email || ''
-    }
-  },
-  { immediate: true }
-)
 
 // AI Description Generation
 const generateEventDescription = async () => {
@@ -50,21 +43,18 @@ const generateEventDescription = async () => {
     return;
   }
 
-  if (!eventForm.value.description) {
-    generatingDescription.value = true;
-    try {
-      eventForm.value.description = await getGroqChatCompletion(
-        eventForm.value.event_name, 
-        eventForm.value.location, 
-        eventForm.value.date, 
-        eventForm.value.time
-      );
-    } catch (error) {
-      console.error('AI request failed:', error);
-      alert('Error generating description.');
-      generatingDescription.value = false;
-      return;
-    }
+  generatingDescription.value = true;
+  try {
+    eventForm.value.description = await getGroqChatCompletion(
+      eventForm.value.event_name, 
+      eventForm.value.location, 
+      eventForm.value.date,
+      eventForm.value.time
+    );
+  } catch (error) {
+    console.error('AI request failed:', error);
+    alert('Error generating description.');
+  } finally {
     generatingDescription.value = false;
   }
 };
@@ -182,31 +172,43 @@ const confirmLocation = () => {
 const emit = defineEmits(['submit-event'])
 
 const submitEvent = () => {
-  if (!eventForm.value.event_name || !eventForm.value.date || 
-      !eventForm.value.time || !eventForm.value.location || 
-      !eventForm.value.description) {
-    alert('Please fill all required fields')
-    return
-  }
-  console.log('Submitting event:', eventForm.value)
-
-  loading.value = true
-  setTimeout(() => {
-    emit('submit-event', { ...eventForm.value })
-    loading.value = false
-    eventForm.value = {
-      name: passengerStore.name?.split(' ')[0] || '',
-      email: passengerStore.passenger?.email || '',
-      event_name: '',
-      date: '',
-      time: '',
-      location: '',
-      description: '',
-      user_type: 'passenger',
+    if (!eventForm.value.event_name || !eventForm.value.date || !eventForm.value.time || 
+        !eventForm.value.location || !eventForm.value.description) {
+        alert('Please fill all required fields')
+        return
     }
-  }, 500)
 
+    loading.value = true
+    setTimeout(() => {
+        emit('submit-event', { ...eventForm.value })
+        eventForm.value = {
+            name: passengerStore.passenger?.name || '',
+            email: passengerStore.passenger?.email || '',
+            event_name: '',
+            date: '',
+            time: '',
+            location: '',
+            description: '',
+            latitude: null,
+            longitude: null,
+            user_type: 'passenger',
+        }
+        locationQuery.value = ''
+        loading.value = false
+    }, 500)
 }
+
+watch(
+  () => passengerStore.passenger,
+  (newVal) => {
+    if (newVal) {
+      eventForm.value.name = newVal.name
+      eventForm.value.email = newVal.email
+    }
+  },
+  { immediate: true } // trigger immediately on mount
+)
+
 </script>
 
 <template>

@@ -32,13 +32,18 @@ const PassengerRoutes = [
     component: () => import('../views/PassengerViews/PDashboardView.vue')
   },
   {
-    path: '/PSuggestionView',
-    name: 'PSuggestionView',
-    component: () => import('../views/PassengerViews/PSuggestionView.vue')
+    path: '/PHistoryView',
+    name: 'PHistoryView',
+    component: () => import('../views/PassengerViews/PHistoryView.vue')
   }
 ]
 
 const DriverRoutes = [
+  {
+    path: '/DRequestView',
+    name: 'DRequestView',
+    component: () => import('../views/DriverViews/DRequestView.vue')
+  },
   {
     path: '/DHomeView',
     name: 'DHomeView',
@@ -78,6 +83,11 @@ const DriverRoutes = [
     path: '/DDashboardView',
     name: 'DDashboardView',
     component: () => import('../views/DriverViews/DDashboardView.vue')
+  },
+  {
+    path: '/DHistoryView',
+    name: 'DHistoryView',
+    component: () => import('../views/DriverViews/DHistoryView.vue')
   }
 ]
 
