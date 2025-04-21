@@ -288,19 +288,13 @@ watch(
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">Event Description *</label>
           <div class="relative">
-            <textarea 
-              v-model="eventForm.description"
-              rows="4"
+            <textarea v-model="eventForm.description" rows="4"
               class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:outline-none pr-10"
-              required
-            ></textarea>
-            <button 
-              v-on:click="generateEventDescription" 
-              type="button"
-              class="absolute bottom-2 right-2 text-black border-[1px] border-black px-2 py-1 rounded-md hover:bg-gradient-to-br from-purple-50 via-pink-100 hover:border-none to-red-50  transition duration-200 transform flex items-center"
-              :disabled="generatingDescription || loading"
-            >
-              generate
+              required></textarea>
+            <button @click="generateEventDescription" type="button" title="Generate Description"
+              class="absolute bottom-4 right-3 text-black border-[1px] border-black px-2 py-2 rounded-xl hover:bg-gray-700 hover:text-white hover:border-white transition duration-200 transform flex items-center"
+              :disabled="generatingDescription || loading">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
             </button>
           </div>
         </div>

@@ -3,475 +3,379 @@ import { RouterLink } from 'vue-router';
 </script>
 
 <template>
-    <div class="main bg-gradient-to-r from-blue-100 to-pink-100 min-h-screen">
-        <!-- Navbar -->
-        <nav class="flex justify-between items-center p-4 text-black shadow-md bg-white">
-            <div class="flex items-center gap-2">
-                <img src="https://imgs.search.brave.com/66yQEF01WsRh1ql1bZWJHMXeVvSUQP7LVjUFYgPEtr4/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tYXJr/ZXRwbGFjZS5jYW52/YS5jb20vRUFFMEM0/UFFJMWsvMS8wLzE2/MDB3L2NhbnZhLWJp/a2UtbG9nby1YaWFv/NmhNSWhGTS5qcGc"
-                    alt="Logo" class="h-14 w-14">
-                <h2 class="text-2xl font-semibold">Karzo</h2>
+    <div class="main bg-gray-50 text-gray-800 font-sans">
+      <nav class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex justify-between items-center h-20">
+            <div class="flex items-center gap-3">
+              <img
+                src="https://placehold.co/60x60/6366f1/white?text=K&font=raleway"
+                alt="Karzo Logo"
+                class="h-10 w-10 rounded-lg"
+              />
+              <span class="text-2xl font-bold text-gray-900">Karzo</span>
             </div>
-            <div class="hidden md:flex items-center gap-10 text-lg cursor-pointer">
-                <h3 class="hover:text-gray-700 hover:-translate-y-3 transition duration-300">
-                   <a href="#events">
-                    Events
-                   </a>
-                </h3>
-                <h3 class="hover:text-gray-700 hover:-translate-y-3 transition duration-300"><a href="#feedback">
-                    Feedback
-                   </a></h3>
-                <h3 class="hover:text-gray-700 hover:-translate-y-3 transition duration-300"><a href="#blogs">
-                    Blogs
-                   </a></h3>
+  
+            <div class="hidden md:flex items-center gap-8 text-base font-medium text-gray-600">
+              <a href="#events" class="hover:text-indigo-600 transition duration-200 ease-in-out">Events</a>
+              <a href="#feedback" class="hover:text-indigo-600 transition duration-200 ease-in-out">Testimonials</a>
+              <a href="#blogs" class="hover:text-indigo-600 transition duration-200 ease-in-out">Blog</a>
             </div>
-            <div class="flex items-center gap-4">
-                <RouterLink :to="{ name: 'DRegisterView' }">
-                    <button
-                        class="border-2 border-black text-black hover:border-slate-600 px-4 py-2 rounded-md hover:bg-pink-700 hover:text-white transition">Driver
-                        Login/Signup</button>
-                </RouterLink>
-                <RouterLink :to="{ name: 'PRegisterView' }">
-                    <button
-                        class="border-2 border-black text-black hover:border-slate-600 px-4 py-2 rounded-md hover:bg-pink-700 hover:text-white transition">Passenger
-                        Login/Signup</button>
-                </RouterLink>
-            </div>
-        </nav>
-
-        <!-- Hero Section -->
-        <section class="flex flex-col lg:flex-row items-center justify-between p-6 lg:p-12 mx-auto max-w-7xl">
-
-            <!-- Left Text Content -->
-            <div class="max-w-md py-5">
-                <h1 class="text-7xl font-bold mb-6 leading-tight">
-                    KARZO <br> FOR EVENTS AND RIDES, FAST <br> RIDES.
-                </h1>
-                <p class="text-gray-600 mb-6">
-                    Join productivity experts from around the world and receive WriteClick—the Karzo Blog Newsletter.
-                </p>
-                <div class="flex items-center gap-2">
-                    <input type="email" placeholder="Enter email"
-                        class="border border-gray-300 px-4 py-3 rounded-lg w-64">
-                    <button class="bg-pink-500 text-white px-6 py-3 rounded-lg hover:bg-pink-600">Subscribe</button>
-                </div>
-            </div>
-
-            <!-- Right Image Card -->
-            <div class="lg:mt-0 max-w-xl">
-                <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <img src="https://imgs.search.brave.com/abP3g4dyrj_nzAIh_shkSn2pb_hK6jvcUupkrQ3_tqc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvODU3/NzE2NzcwL3Bob3Rv/L21hbi1yaWRpbmct/c2Nvb3Rlci1kdXJp/bmctc3Vuc2V0Lmpw/Zz9zPTYxMng2MTIm/dz0wJms9MjAmYz1f/TzBCbFFQTTNNTjBC/eHhEaWp5MXY4aWpf/d3BJTUxjSWVsa3A2/UVlCbU1rPQ" alt="Karzo Blog"
-                        class="w-full">
-                    <div class="p-4">
-                        <h3 class="text-xl font-semibold">Post or book Ride through Events. Instant Ride Book.</h3>
-                        <div class="flex items-center mt-2 text-gray-500 text-sm">
-                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Author"
-                                class="h-8 w-8 rounded-full mr-2">
-                            <span>Zeb Evans</span>
-                            <span class="ml-auto flex items-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none"
-                                    viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 8v4l3 3"></path>
-                                </svg>
-                                Max 1 min read
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Articles Section -->
-        <section class="p-10" id="events">
-            <h2 class="flex items-center text-2xl font-semibold gap-3 ">
-                <i class="fa-regular fa-map bg-pink-500 p-4 rounded-2xl"></i>
-                Top Events
-            </h2>
-
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-                <!-- First Row -->
-                <div class="bg-white shadow-lg rounded-xl overflow-hidden">
-                    <img src="https://imgs.search.brave.com/7mdeEijBoPN_8xOoCTZb116QmK2nTEGhvOdx3yoCYNI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTU3/NTI1NTY3L3Bob3Rv/L2Jpa2VyLW91dC1m/b3ItYS1yaWRlLmpw/Zz9zPTYxMng2MTIm/dz0wJms9MjAmYz1v/dDlSUUdyMG9oT21R/SFFNbUExeHlZclU2/bzJ4VGN3a3g5eXNX/Q0k0QW1VPQ"
-                        alt="Article Image" class="w-full">
-                    <div class="p-6">
-                        <p class="text-pink-500 font-semibold text-sm">Churchgate</p>
-                        <h3 class="text-xl font-bold mt-2">Kala Ghoda Fest</h3>
-                        <div class="flex items-center mt-4">
-                            <img src="https://imgs.search.brave.com/ijTo77se1G_-_xT2NtVZcQtEbTCp9SFN-grP6nUPSP0/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTEz/NjQxMzIxNS9waG90/by95b3VuZy1tYW4t/YXQtc3RyZWV0LW1h/cmtldC5qcGc_cz02/MTJ4NjEyJnc9MCZr/PTIwJmM9b2JuYVI1/SUlJMGpSeEhLZDRa/UGwzTFJDMnBJNzky/S2JIWVIyZUJ6S0tl/OD0"
-                                alt="Author" class="w-8 h-8 rounded-full">
-                            <p class="ml-2 text-gray-600">Zeb Evans</p>
-                            <span class="ml-auto flex items-center text-gray-500">
-
-                                Max 1min read
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white shadow-lg rounded-xl overflow-hidden">
-                    <img src="https://imgs.search.brave.com/-yO3Y6K6nhWpkIbxYdZnmUx1o_DISL_MOYcBoB6AA-k/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9jZG4u/cGl4YWJheS5jb20v/cGhvdG8vMjAxNi8w/Mi8xMy8xMy8xMS9v/bGR0aW1lci0xMTk3/ODAwXzY0MC5qcGc"
-                        alt="Article Image" class="w-full">
-                    <div class="p-6">
-                        <p class="text-pink-500 font-semibold text-sm">Dadar</p>
-                        <h3 class="text-xl font-bold mt-2">Shivaji park diwali festival.</h3>
-                        <div class="flex items-center mt-4">
-                            <img src="https://imgs.search.brave.com/ZwaaoEqTuikuekr7KJS8-VQdgt2DpEDk3ZdNf1L0AxI/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvOTU4/MDY0MjI4L3Bob3Rv/L3BvcnRyYWl0LW9m/LWhhcHB5LXlvdW5n/LW1hbi5qcGc_cz02/MTJ4NjEyJnc9MCZr/PTIwJmM9bFpveEFH/d1FkX0lMMXA1MFI2/RkNYd2JLdG9mb1N1/a25tQUtKb2Q2T2t6/UT0"
-                                alt="Author" class="w-8 h-8 rounded-full">
-                            <p class="ml-2 text-gray-600">Zeb Evans</p>
-                            <span class="ml-auto flex items-center text-gray-500">
-
-                                Max 1min read
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white shadow-lg rounded-xl overflow-hidden">
-                    <img src="https://imgs.search.brave.com/fem6_chcVwffrqdRfXHJuTBm38x0NI3s4z3yvukVqGs/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvNTIx/ODkwMzI5L3Bob3Rv/L2Jpa2UtcmlkZXIu/anBnP3M9NjEyeDYx/MiZ3PTAmaz0yMCZj/PXA1Nkp4eGlDWDNM/eU1zdWZFNXVtUi1r/V1FrUHNiUm5POEtJ/OUpyamgxUFk9"
-                        alt="Article Image" class="w-full">
-                    <div class="p-6">
-                        <p class="text-pink-500 font-semibold text-sm">Mahim</p>
-                        <h3 class="text-xl font-bold mt-2">Mahim ka mela.</h3>
-                        <div class="flex items-center mt-4">
-                            <img src="https://imgs.search.brave.com/KUtv8_2I1cc7cEGCu4UanWs03EhmNRjVqqabwpWLbLM/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTQ1/NTM0MzI4Mi9waG90/by92aWRlby1wb3J0/cmFpdC1vZi1hbi1p/bmRpYW4tbWFuLmpw/Zz9zPTYxMng2MTIm/dz0wJms9MjAmYz1X/dUZkWlpTQ2N2c2h0/LVV5aWwtXzItY3pt/ZkplV2Nmd25FNlRf/bmNKTHZZPQ"
-                                alt="Author" class="w-8 h-8 rounded-full">
-                            <p class="ml-2 text-gray-600">Zeb Evans</p>
-                            <span class="ml-auto flex items-center text-gray-500">
-
-                                Max 1min read
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Second Row -->
-                <div class="bg-white shadow-lg rounded-xl overflow-hidden">
-                    <img src="https://imgs.search.brave.com/ErhPvm2aFdg3QMd1UjOEZcl8mY6GHbLl6H6EpRzMYqc/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvOTU2/MTUyODg2L3Bob3Rv/L21vdG9yYmlrZS1y/aWRlLW9uLWEtY291/bnRyeS1yb2FkLmpw/Zz9zPTYxMng2MTIm/dz0wJms9MjAmYz1x/OTFkU2QtdzExMGVo/RzFHT0dvemJ0SktK/M2R6TTdfem1aUnJ6/LTZGNXo4PQ"
-                        alt="Article Image" class="w-full">
-                    <div class="p-6">
-                        <p class="text-pink-500 font-semibold text-sm">Bandra</p>
-                        <h3 class="text-xl font-bold mt-2">Bandra Bandstand and reclamation.</h3>
-                        <div class="flex items-center mt-4">
-                            <img src="https://imgs.search.brave.com/RFz5A_fbumGYi9OWZLxAFJrWjoaymucnmINdmpufADQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMTEy/ODY3ODk4Ni9waG90/by9wb3J0cmFpdC1v/Zi1hLWhhbmRzb21l/LWluZGlhbi1tYW4u/anBnP3M9NjEyeDYx/MiZ3PTAmaz0yMCZj/PXQ1Y09UdkVCVl9f/NG1TeUZpR1IyMk53/REZHeElldUdkeXIy/c05RODAtNGs9"
-                                alt="Author" class="w-8 h-8 rounded-full">
-                            <p class="ml-2 text-gray-600">Zeb Evans</p>
-                            <span class="ml-auto flex items-center text-gray-500">
-
-                                Max 1min read
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white shadow-lg rounded-xl overflow-hidden">
-                    <img src="https://imgs.search.brave.com/liQxq7ICPU7J4N5PaG6fQqm5j4vfPQebQ6P3JK4XR_M/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTU4/MjY2NDgzMS9waG90/by9iaWtlci13aXRo/LWZ1bGwtc2FmZXR5/LWdlYXItZW5qb3lz/LXJpZGUtb24tY291/bnRyeS1yb2FkLmpw/Zz9zPTYxMng2MTIm/dz0wJms9MjAmYz0x/R1VRVjlpWnh4OU5I/MTk0U19RWlJRenNq/YkhndDBTZ29CN01Y/Y1dKTEM0PQ"
-                        alt="Article Image" class="w-full">
-                    <div class="p-6">
-                        <p class="text-pink-500 font-semibold text-sm">Ghatkoper</p>
-                        <h3 class="text-xl font-bold mt-2">Tata Running race.</h3>
-                        <div class="flex items-center mt-4">
-                            <img src="https://imgs.search.brave.com/AEvxdXin6oXW-2zSlMBH26tndkwHCAJNVK100zPhA2g/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTMw/MDMxOTcxMy9waG90/by9wb3J0cmFpdC1v/Zi1tYW4taW4tdHJh/ZGl0aW9uYWwtaW5k/aWFuLWNsb3RoaW5n/LmpwZz9zPTYxMng2/MTImdz0wJms9MjAm/Yz1IREF6dXhOVmpw/VEZveE15ODctSldX/VXZ4ajVzb1d3YjAy/ZVNTOXE1NE0wPQ"
-                                alt="Author" class="w-8 h-8 rounded-full">
-                            <p class="ml-2 text-gray-600">Zeb Evans</p>
-                            <span class="ml-auto flex items-center text-gray-500">
-
-                                Max 1min read
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white shadow-lg rounded-xl overflow-hidden">
-                    <img src="https://imgs.search.brave.com/OUe16QaKAAoF4uI3mqk8XrYozmpIPy_BweBt_eZZpxE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvNjI1/ODMwMDUwL3Bob3Rv/L21vdG9yY3ljbGUt/cGFya2luZy1zcGFj/ZS1pbi1pbmRpYS5q/cGc_cz02MTJ4NjEy/Jnc9MCZrPTIwJmM9/bXlHZ1lsNy1iZ1R5/Y29tTW5aLUdobEdJ/ZDlxMm0wa21WMFVk/VGxELVl3TT0"
-                        alt="Article Image" class="w-full">
-                    <div class="p-6">
-                        <p class="text-pink-500 font-semibold text-sm">Goa</p>
-                        <h3 class="text-xl font-bold mt-2">St.Vectoria Church.</h3>
-                        <div class="flex items-center mt-4">
-                            <img src="https://imgs.search.brave.com/-JpHJukojOqSZvREizeH89q6TDHhRR7wn4S0vucgeb8/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbWcu/ZnJlZXBpay5jb20v/ZnJlZS1waG90by9p/bmRpYW4tbWFuLWNp/dHktbWFsZS10cmFk/aXRpb25hbC10dXJi/YW4taGluZHVpc3Qt/c3VtbWVyLWNpdHlf/MTE1Ny00MTAyNi5q/cGc_c2VtdD1haXNf/aHlicmlk"
-                                alt="Author" class="w-8 h-8 rounded-full">
-                            <p class="ml-2 text-gray-600">Zeb Evans</p>
-                            <span class="ml-auto flex items-center text-gray-500">
-
-                                Max 1min read
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-        </section>
-
-<!-- User Feedback Section -->
-<section class="p-10 pt-12 pb-15" id="feedback">
-  <div class="text-center py-10 max-w-5xl mx-auto">
-    <h2 class="text-black text-lg font-bold">User Feedback</h2>
-    <h1 class="text-3xl md:text-4xl font-bold mt-2">
-      What Karzo users are saying about their ride experience.
-    </h1>
-    <p class="text-gray-600 mt-3">
-      Karzo is committed to providing a seamless and reliable ridesharing experience.
-      See what our users have to say about their journeys with us!
-    </p>
-  </div>
-  <div class="feedback-container overflow-hidden w-full">
-    <div
-      class="feedback-scroll flex gap-6 w-max animate-[scroll_15s_linear_infinite]"
-    >
-      <!-- Feedback Items -->
-      <div class="flex gap-6">
-        <div
-          class="p-5 shadow-lg rounded-lg bg-gray-50 flex flex-col items-center"
-        >
-          <img
-            src="https://randomuser.me/api/portraits/men/7.jpg"
-            class="w-12 h-12 rounded-full"
-            alt="User"
-          />
-          <h4 class="text-lg font-semibold">Rahul Sharma</h4>
-          <p class="text-yellow-500">
-            <i class="fa-solid fa-star"></i> 4.8
-          </p>
-          <p class="text-gray-600">
-            Karzo makes commuting so easy! The multi-stop feature is a lifesaver.
-          </p>
+  
+            <div class="flex items-center gap-3">
+              <RouterLink :to="{ name: 'DRegisterView' }">
+                <button class="px-4 py-2 text-sm font-semibold text-indigo-600 border border-indigo-200 rounded-md hover:bg-indigo-50 transition duration-200 ease-in-out">
+                  Driver Portal
+                </button>
+              </RouterLink>
+              <RouterLink :to="{ name: 'PRegisterView' }">
+                <button class="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 transition duration-200 ease-in-out shadow-sm">
+                  Passenger Sign Up
+                </button>
+              </RouterLink>
+              </div>
+          </div>
         </div>
-        <div
-          class="p-5 shadow-lg rounded-lg bg-gray-50 flex flex-col items-center"
-        >
-          <img
-            src="https://randomuser.me/api/portraits/women/8.jpg"
-            class="w-12 h-12 rounded-full"
-            alt="User"
-          />
-          <h4 class="text-lg font-semibold">Ananya Verma</h4>
-          <p class="text-yellow-500">
-            <i class="fa-solid fa-star"></i> 5.0
-          </p>
-          <p class="text-gray-600">
-            Love the safety gear reminders and ride experience ratings!
-          </p>
-        </div>
-        <div
-          class="p-5 shadow-lg rounded-lg bg-gray-50 flex flex-col items-center"
-        >
-          <img
-            src="https://randomuser.me/api/portraits/men/9.jpg"
-            class="w-12 h-12 rounded-full"
-            alt="User"
-          />
-          <h4 class="text-lg font-semibold">Vikram Patel</h4>
-          <p class="text-yellow-500">
-            <i class="fa-solid fa-star"></i> 4.7
-          </p>
-          <p class="text-gray-600">
-            The shared taxi option is great for saving money on daily rides!
-          </p>
-        </div>
-        <div
-          class="p-5 shadow-lg rounded-lg bg-gray-50 flex flex-col items-center"
-        >
-          <img
-            src="https://randomuser.me/api/portraits/women/10.jpg"
-            class="w-12 h-12 rounded-full"
-            alt="User"
-          />
-          <h4 class="text-lg font-semibold">Meera Nair</h4>
-          <p class="text-yellow-500">
-            <i class="fa-solid fa-star"></i> 4.9
-          </p>
-          <p class="text-gray-600">
-            Booking is super fast and the drivers are friendly. Great experience!
-          </p>
-        </div>
-      </div>
-      <!-- Duplicate Items for Infinite Scroll Effect -->
-      <div class="flex gap-6">
-        <div
-          class="p-5 shadow-lg rounded-lg bg-gray-50 flex flex-col items-center"
-        >
-          <img
-            src="https://randomuser.me/api/portraits/men/7.jpg"
-            class="w-12 h-12 rounded-full"
-            alt="User"
-          />
-          <h4 class="text-lg font-semibold">Rahul Sharma</h4>
-          <p class="text-yellow-500">
-            <i class="fa-solid fa-star"></i> 4.8
-          </p>
-          <p class="text-gray-600">
-            Karzo makes commuting so easy! The multi-stop feature is a lifesaver.
-          </p>
-        </div>
-        <div
-          class="p-5 shadow-lg rounded-lg bg-gray-50 flex flex-col items-center"
-        >
-          <img
-            src="https://randomuser.me/api/portraits/women/8.jpg"
-            class="w-12 h-12 rounded-full"
-            alt="User"
-          />
-          <h4 class="text-lg font-semibold">Ananya Verma</h4>
-          <p class="text-yellow-500">
-            <i class="fa-solid fa-star"></i> 5.0
-          </p>
-          <p class="text-gray-600">
-            Love the safety gear reminders and ride experience ratings!
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-        <section class="p-10 lg:p-20 text-center relative" id="blogs">
-            <h2 class="text-3xl font-bold mb-6">Latest Blogs & Insights</h2>
-            <p class="text-lg text-gray-600 mb-10">
-                Stay updated with expert opinions, industry trends, and the latest news from our team.
+      </nav>
+  
+      <section class="relative pt-16 pb-24 md:pt-24 md:pb-32 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-purple-50 opacity-60"></div>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div class="text-center lg:text-left">
+            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
+              Seamless Rides, <br class="hidden sm:inline" /> Unforgettable <span class="bg-gradient-to-br from-[#0C0C0C] via-[#0C0C0C] to-[#4834D4] text-transparent bg-clip-text">Events</span>.
+            </h1>
+            <p class="text-lg text-gray-600 mb-8 max-w-xl mx-auto lg:mx-0">
+              Connect with drivers for instant rides or event transport. Join Karzo for reliable, fast, and safe journeys across the city.
             </p>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Blog 1 -->
-                <div
-                    class="flex flex-col md:flex-row items-center border-2 border-gray-400 backdrop-blur-md p-6 rounded-lg shadow-xl">
-                    <img src="https://imgs.search.brave.com/59qNrg_Isrs2nR6cV81iim8DTN58A6bNxJvBvTmu_YE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvNjUx/MjcwMzExL3Bob3Rv/L2NoaGF0cmFwYXRp/LXNoaXZhamktcmFp/bHdheS1zdGF0aW9u/LmpwZz9zPTYxMng2/MTImdz0wJms9MjAm/Yz1JblF0a3NpTnkx/aC11czBlcFc1Wl94/STJzQzh2VDhvWE5s/d002cjVuc0VvPQ"
-                        alt="Blog Image" class="w-full md:w-1/2 h-56 object-cover rounded-lg">
-                    <div class="p-6 text-left">
-                        <h3 class="text-xl font-semibold">The Future of Ridesharing</h3>
-                        <p class="text-gray-600 mt-2">
-                            The ridesharing industry is evolving rapidly with AI and electric vehicles playing a major
-                            role.
-                            Companies are focusing on safety measures, eco-friendly rides, and seamless customer
-                            experiences.
-                            As urban mobility demands grow, integrating smart technology will be crucial for the next
-                            phase of ridesharing.
-                        </p>
-                        <p class="text-gray-500 text-sm mt-2">😄 By John Doe | March 10, 2025</p>
-                    </div>
-                </div>
-
-                <!-- Blog 2 -->
-                <div
-                    class="flex flex-col md:flex-row items-center border-2 border-gray-400 backdrop-blur-md p-6 rounded-lg shadow-xl">
-                    <img src="https://imgs.search.brave.com/59qNrg_Isrs2nR6cV81iim8DTN58A6bNxJvBvTmu_YE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvNjUx/MjcwMzExL3Bob3Rv/L2NoaGF0cmFwYXRp/LXNoaXZhamktcmFp/bHdheS1zdGF0aW9u/LmpwZz9zPTYxMng2/MTImdz0wJms9MjAm/Yz1JblF0a3NpTnkx/aC11czBlcFc1Wl94/STJzQzh2VDhvWE5s/d002cjVuc0VvPQ"
-                        alt="Blog Image" class="w-full md:w-1/2 h-56 object-cover rounded-lg">
-                    <div class="p-6 text-left">
-                        <h3 class="text-xl font-semibold">Smart City Transportation</h3>
-                        <p class="text-gray-600 mt-2">
-                            Smart cities are integrating intelligent transportation systems to reduce congestion and
-                            pollution.
-                            Automated public transport, data-driven traffic management, and sustainable ride options are
-                            shaping urban mobility.
-                            The future holds AI-driven solutions that will make commuting more efficient and affordable.
-                        </p>
-                        <p class="text-gray-500 text-sm mt-2">😄 By Jane Smith | March 8, 2025</p>
-                    </div>
-                </div>
-
-                <!-- Blog 3 -->
-                <div
-                    class="flex flex-col md:flex-row items-center border-2 border-gray-400 backdrop-blur-md p-6 rounded-lg shadow-xl">
-                    <img src="https://imgs.search.brave.com/59qNrg_Isrs2nR6cV81iim8DTN58A6bNxJvBvTmu_YE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvNjUx/MjcwMzExL3Bob3Rv/L2NoaGF0cmFwYXRp/LXNoaXZhamktcmFp/bHdheS1zdGF0aW9u/LmpwZz9zPTYxMng2/MTImdz0wJms9MjAm/Yz1JblF0a3NpTnkx/aC11czBlcFc1Wl94/STJzQzh2VDhvWE5s/d002cjVuc0VvPQ"
-                        alt="Blog Image" class="w-full md:w-1/2 h-56 object-cover rounded-lg">
-                    <div class="p-6 text-left">
-                        <h3 class="text-xl font-semibold">Maximizing Driver Earnings</h3>
-                        <p class="text-gray-600 mt-2">
-                            Rideshare drivers can increase earnings by optimizing their working hours, choosing
-                            high-demand locations, and utilizing incentives.
-                            Learning passenger trends and leveraging in-app features help maximize efficiency.
-                            Future trends suggest better pay models and benefits for rideshare drivers.
-                        </p>
-                        <p class="text-gray-500 text-sm mt-2">😄 By Alex Brown | March 5, 2025</p>
-                    </div>
-                </div>
-
-                <!-- Blog 4 -->
-                <div
-                    class="flex flex-col md:flex-row items-center border-2 border-gray-400 backdrop-blur-md p-6 rounded-lg shadow-xl">
-                    <img src="https://imgs.search.brave.com/59qNrg_Isrs2nR6cV81iim8DTN58A6bNxJvBvTmu_YE/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvNjUx/MjcwMzExL3Bob3Rv/L2NoaGF0cmFwYXRp/LXNoaXZhamktcmFp/bHdheS1zdGF0aW9u/LmpwZz9zPTYxMng2/MTImdz0wJms9MjAm/Yz1JblF0a3NpTnkx/aC11czBlcFc1Wl94/STJzQzh2VDhvWE5s/d002cjVuc0VvPQ"
-                        alt="Blog Image" class="w-full md:w-1/2 h-56 object-cover rounded-lg">
-                    <div class="p-6 text-left">
-                        <h3 class="text-xl font-semibold">Ridesharing vs Traditional Taxis</h3>
-                        <p class="text-gray-600 mt-2">
-                            While traditional taxis have long been a reliable mode of transport, ridesharing apps offer
-                            flexibility, affordability, and real-time tracking.
-                            The competition is leading to improved services, but regulatory challenges remain a key
-                            factor.
-                            Passenger safety, pricing models, and driver benefits are crucial in shaping the industry's
-                            future.
-                        </p>
-                        <p class="text-gray-500 text-sm mt-2">😄 By Lisa Green | March 2, 2025</p>
-                    </div>
-                </div>
+            <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-4 max-w-md mx-auto lg:mx-0">
+              <input
+                type="email"
+                placeholder="Enter your email"
+                class="flex-grow px-5 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-base"
+              />
+              <button class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-md shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 ease-in-out">
+                Get Started
+              </button>
             </div>
-        </section>
-        <footer class="bg-gray-100 py-8">
-            <div class="container mx-auto px-6">
-                <div class="grid md:grid-cols-3 gap-8">
-
-                    <!-- Left Section -->
-                    <div>
-                        <h2 class="text-lg font-semibold text-gray-800">Let's keep in touch!</h2>
-                        <p class="text-gray-600 mt-1">Find us on any of these platforms, we respond in 1-2 business
-                            days.</p>
-
-                        <!-- Social Icons -->
-                        <div class="flex space-x-3 mt-4">
-                            <a href="#"
-                                class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-200">
-                                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v6/icons/twitter.svg"
-                                    class="w-5 h-5" alt="Twitter">
-                            </a>
-                            <a href="#"
-                                class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-200">
-                                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v6/icons/facebook.svg"
-                                    class="w-5 h-5" alt="Facebook">
-                            </a>
-                            <a href="#"
-                                class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-200">
-                                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v6/icons/dribbble.svg"
-                                    class="w-5 h-5" alt="Dribbble">
-                            </a>
-                            <a href="#"
-                                class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-200">
-                                <img src="https://cdn.jsdelivr.net/npm/simple-icons@v6/icons/github.svg" class="w-5 h-5"
-                                    alt="GitHub">
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- Middle Section -->
-                    <div>
-                        <h2 class="text-lg font-semibold text-gray-800">USEFUL LINKS</h2>
-                        <ul class="mt-2 space-y-1 text-gray-600">
-                            <li><a href="#" class="hover:text-gray-800">Blog</a></li>
-                            <li><a href="#" class="hover:text-gray-800">Github</a></li>
-                        </ul>
-                    </div>
-
-                    <!-- Right Section -->
-                    <div>
-                        <h2 class="text-lg font-semibold text-gray-800">OTHER RESOURCES</h2>
-                        <ul class="mt-2 space-y-1 text-gray-600">
-                            <li><a href="#" class="hover:text-gray-800">MIT License</a></li>
-                            <li><a href="#" class="hover:text-gray-800">Terms & Conditions</a></li>
-                            <li><a href="#" class="hover:text-gray-800">Privacy Policy</a></li>
-                            <li><a href="#" class="hover:text-gray-800">Contact Us</a></li>
-                        </ul>
-                    </div>
-
+            <p class="text-sm text-gray-500 mt-4">Subscribe to our newsletter for updates.</p>
+          </div>
+  
+          <div class="mt-10 lg:mt-0">
+            <div class="bg-white rounded-xl shadow-2xl overflow-hidden aspect-video">
+              <video
+                src="https://videos.pexels.com/video-files/5834563/5834563-uhd_1440_2560_24fps.mp4"
+                autoplay
+                loop
+                muted
+                alt="Karzo Ride Booking"
+                class="w-full h-full object-cover pointer-events-none"
+              />
+              </div>
+          </div>
+        </div>
+      </section>
+  
+      <section class="py-16 md:py-24 bg-white" id="events">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12">
+             <h2 class="text-base font-semibold text-indigo-600 tracking-wide uppercase">Explore</h2>
+             <p class="mt-2 text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight">Upcoming Local Events</p>
+             <p class="mt-4 max-w-2xl text-lg text-gray-500 mx-auto">
+               Find rides to the city's top happenings or share your journey.
+             </p>
+          </div>
+  
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="bg-gray-50 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl group">
+              <img src="https://imgs.search.brave.com/a4dDrisJOmUvKrqzhXSwAwRvPL2uqKk9k6sK2c5wbfg/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93d3cu/Y2FsZWlkb3Njb3Bl/LmluL3dwLWNvbnRl/bnQvdXBsb2Fkcy8y/MDE2LzAyL2thbGEt/Z2hvZGEtYXJ0cy1m/ZXN0aXZhbC0zLmpw/Zw" alt="Kala Ghoda Fest" class="w-full h-48 object-cover">
+              <div class="p-6">
+                <p class="text-sm font-semibold text-indigo-600">Churchgate</p>
+                <h3 class="text-xl font-bold text-gray-900 mt-2 mb-3 group-hover:text-indigo-700 transition duration-200">Kala Ghoda Arts Festival</h3>
+                <p class="text-sm text-gray-600 mb-4 line-clamp-2">Experience the vibrant celebration of arts and culture in the heart of Mumbai.</p>
+                <div class="flex items-center text-xs text-gray-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                  <span>Feb 1st - Feb 9th, 2026</span>
+                   <span class="ml-auto font-medium text-indigo-500 hover:text-indigo-700 cursor-pointer">Details & Rides &rarr;</span>
                 </div>
-
-                <!-- Copyright -->
-                <div class="text-center text-gray-600 text-sm mt-8">
-                    Copyright © 2025 KARZO Website by Yash Patkar.
-                </div>
+              </div>
             </div>
-        </footer>
-
+  
+            <div class="bg-gray-50 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl group">
+              <img src="https://imgs.search.brave.com/lrnSGCOWLEwDhjyoU0qIdZbYnHZOiN84W3gz0QH5qV0/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9wcmV2/aWV3LnJlZGQuaXQv/c2hpdmFqaS1wYXJr/LWRhZGFyLWR1cmlu/Zy1kaXdhbGktdjAt/aTB4ZXdxZzdnZ3lk/MS5qcGc_d2lkdGg9/NjQwJmNyb3A9c21h/cnQmYXV0bz13ZWJw/JnM9ODgzZGFmOTNk/ZjU3M2VkZTE2NWM1/ZjkyMDliNjUyNGI5/ZWRkMGY0MA" alt="Shivaji Park Diwali" class="w-full h-48 object-cover">
+              <div class="p-6">
+                <p class="text-sm font-semibold text-indigo-600">Dadar</p>
+                <h3 class="text-xl font-bold text-gray-900 mt-2 mb-3 group-hover:text-indigo-700 transition duration-200">Shivaji Park Diwali Pahat</h3>
+                <p class="text-sm text-gray-600 mb-4 line-clamp-2">Join the traditional early morning Diwali celebrations with music and community.</p>
+                 <div class="flex items-center text-xs text-gray-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                  <span>Oct 25th, 2025 (Tentative)</span>
+                   <span class="ml-auto font-medium text-indigo-500 hover:text-indigo-700 cursor-pointer">Details & Rides &rarr;</span>
+                </div>
+              </div>
+            </div>
+  
+            <div class="bg-gray-50 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl group">
+              <img src="https://imgs.search.brave.com/JYTLwugjKYb2FWcl26PGdzZ15e5m8gnuU6oVMbUSm_Y/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9pbS53/aGF0c2hvdC5pbi9p/bWcvMjAxOS9EZWMv/NDkwMTc3NzEtMjU5/MTM1MDkxNDIyMzQx/NS0yNjk3Njc5Mzc4/MjA4MjYwMDk2LW8t/MTU3NjIyODMxNC5q/cGc_d3A9MQ" alt="Mahim Fair" class="w-full h-48 object-cover">
+              <div class="p-6">
+                <p class="text-sm font-semibold text-indigo-600">Mahim</p>
+                <h3 class="text-xl font-bold text-gray-900 mt-2 mb-3 group-hover:text-indigo-700 transition duration-200">Mahim Fair (Mela)</h3>
+                <p class="text-sm text-gray-600 mb-4 line-clamp-2">A vibrant local fair held annually, known for its unique stalls and festive atmosphere.</p>
+                 <div class="flex items-center text-xs text-gray-500">
+                   <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                  <span>Dec 15th - Dec 25th, 2025</span>
+                   <span class="ml-auto font-medium text-indigo-500 hover:text-indigo-700 cursor-pointer">Details & Rides &rarr;</span>
+                </div>
+              </div>
+            </div>
+            </div>
+          <div class="text-center mt-12">
+              <button class="px-6 py-3 border border-indigo-600 text-indigo-600 font-semibold rounded-md hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 ease-in-out">
+                View All Events
+              </button>
+          </div>
+        </div>
+      </section>
+  
+      <section class="py-16 md:py-24 bg-gradient-to-b from-indigo-50 to-purple-50 overflow-hidden" id="feedback">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12">
+             <h2 class="text-base font-semibold text-indigo-600 tracking-wide uppercase">Testimonials</h2>
+             <p class="mt-2 text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight">Loved by Riders & Drivers</p>
+             <p class="mt-4 max-w-2xl text-lg text-gray-500 mx-auto">
+               Hear directly from our community about their Karzo experience.
+             </p>
+          </div>
+  
+          <div class="feedback-container relative overflow-hidden group">
+             <div class="absolute top-0 bottom-0 left-0 w-16 bg-gradient-to-r from-indigo-50 to-transparent z-10"></div>
+             <div class="absolute top-0 bottom-0 right-0 w-16 bg-gradient-to-l from-indigo-50 to-transparent z-10"></div>
+  
+             <div class="feedback-scroll flex gap-8 w-max animate-scroll group-hover:[animation-play-state:paused]">
+               <template v-for="n in 2" :key="n">
+                 <div class="bg-white p-6 rounded-xl shadow-lg w-80 flex-shrink-0">
+                   <div class="flex items-center mb-4">
+                     <img src="https://randomuser.me/api/portraits/men/7.jpg" class="w-12 h-12 rounded-full mr-4 border-2 border-indigo-100" alt="User Rahul"/>
+                     <div>
+                       <h4 class="text-lg font-semibold text-gray-900">Rahul Sharma</h4>
+                       <div class="flex items-center text-yellow-500">
+                          <i class="fa-solid fa-star text-sm"></i>
+                          <i class="fa-solid fa-star text-sm ml-0.5"></i>
+                          <i class="fa-solid fa-star text-sm ml-0.5"></i>
+                          <i class="fa-solid fa-star text-sm ml-0.5"></i>
+                          <i class="fa-solid fa-star-half-stroke text-sm ml-0.5"></i>
+                          <span class="text-xs text-gray-500 ml-2">(4.8)</span>
+                       </div>
+                     </div>
+                   </div>
+                   <p class="text-gray-600 text-sm leading-relaxed">"Karzo makes my daily commute incredibly easy. Booking is instant, and the multi-stop feature is a lifesaver for errands!"</p>
+                 </div>
+  
+                 <div class="bg-white p-6 rounded-xl shadow-lg w-80 flex-shrink-0">
+                   <div class="flex items-center mb-4">
+                     <img src="https://randomuser.me/api/portraits/women/8.jpg" class="w-12 h-12 rounded-full mr-4 border-2 border-indigo-100" alt="User Ananya"/>
+                     <div>
+                       <h4 class="text-lg font-semibold text-gray-900">Ananya Verma</h4>
+                        <div class="flex items-center text-yellow-500">
+                          <i class="fa-solid fa-star text-sm"></i>
+                          <i class="fa-solid fa-star text-sm ml-0.5"></i>
+                          <i class="fa-solid fa-star text-sm ml-0.5"></i>
+                          <i class="fa-solid fa-star text-sm ml-0.5"></i>
+                          <i class="fa-solid fa-star text-sm ml-0.5"></i>
+                          <span class="text-xs text-gray-500 ml-2">(5.0)</span>
+                       </div>
+                     </div>
+                   </div>
+                   <p class="text-gray-600 text-sm leading-relaxed">"As a female rider, safety is paramount. I appreciate the driver verification and the safety gear reminders. Always feel secure with Karzo."</p>
+                 </div>
+  
+                  <div class="bg-white p-6 rounded-xl shadow-lg w-80 flex-shrink-0">
+                   <div class="flex items-center mb-4">
+                     <img src="https://randomuser.me/api/portraits/men/9.jpg" class="w-12 h-12 rounded-full mr-4 border-2 border-indigo-100" alt="User Vikram"/>
+                     <div>
+                       <h4 class="text-lg font-semibold text-gray-900">Vikram Patel</h4>
+                       <div class="flex items-center text-yellow-500">
+                          <i class="fa-solid fa-star text-sm"></i>
+                          <i class="fa-solid fa-star text-sm ml-0.5"></i>
+                          <i class="fa-solid fa-star text-sm ml-0.5"></i>
+                          <i class="fa-solid fa-star text-sm ml-0.5"></i>
+                          <i class="fa-solid fa-star-half-stroke text-sm ml-0.5"></i>
+                          <span class="text-xs text-gray-500 ml-2">(4.7)</span>
+                       </div>
+                     </div>
+                   </div>
+                   <p class="text-gray-600 text-sm leading-relaxed">"Driving with Karzo gives me the flexibility I need. The app is intuitive, and the support team is responsive. Great way to earn."</p>
+                 </div>
+  
+                  <div class="bg-white p-6 rounded-xl shadow-lg w-80 flex-shrink-0">
+                   <div class="flex items-center mb-4">
+                     <img src="https://randomuser.me/api/portraits/women/10.jpg" class="w-12 h-12 rounded-full mr-4 border-2 border-indigo-100" alt="User Meera"/>
+                     <div>
+                       <h4 class="text-lg font-semibold text-gray-900">Meera Nair</h4>
+                       <div class="flex items-center text-yellow-500">
+                          <i class="fa-solid fa-star text-sm"></i>
+                          <i class="fa-solid fa-star text-sm ml-0.5"></i>
+                          <i class="fa-solid fa-star text-sm ml-0.5"></i>
+                          <i class="fa-solid fa-star text-sm ml-0.5"></i>
+                          <i class="fa-solid fa-star text-sm ml-0.5"></i>
+                          <span class="text-xs text-gray-500 ml-2">(4.9)</span>
+                       </div>
+                     </div>
+                   </div>
+                   <p class="text-gray-600 text-sm leading-relaxed">"Booking event rides used to be stressful. Karzo's pre-booking option for events is fantastic. Reliable and always on time."</p>
+                 </div>
+               </template>
+             </div>
+          </div>
+        </div>
+      </section>
+  
+      <section class="py-16 md:py-24 bg-white" id="blogs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+           <div class="text-center mb-12">
+             <h2 class="text-base font-semibold text-indigo-600 tracking-wide uppercase">Insights</h2>
+             <p class="mt-2 text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight">From the Karzo Blog</p>
+             <p class="mt-4 max-w-2xl text-lg text-gray-500 mx-auto">
+               Stay updated on ridesharing trends, safety tips, and company news.
+             </p>
+          </div>
+  
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div class="flex flex-col bg-gray-50 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl group">
+                  <img src="https://placehold.co/400x250/e0e7ff/4338ca?text=Blog+1&font=raleway" alt="Future of Ridesharing" class="w-full h-48 object-cover">
+                  <div class="p-6 flex flex-col flex-grow">
+                      <p class="text-sm font-semibold text-indigo-600">Industry Trends</p>
+                      <h3 class="text-xl font-bold text-gray-900 mt-2 mb-3 group-hover:text-indigo-700 transition duration-200 flex-grow">The Future of Urban Mobility: AI & Electric Rides</h3>
+                      <p class="text-sm text-gray-600 mb-4 line-clamp-3">Explore how AI optimization and the shift to electric vehicles are revolutionizing the ridesharing experience for passengers and drivers alike.</p>
+                      <div class="flex items-center text-xs text-gray-500 mt-auto pt-4 border-t border-gray-200">
+                         <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Author" class="w-6 h-6 rounded-full mr-2">
+                         <span>John Doe</span>
+                         <span class="mx-1">|</span>
+                         <span>March 10, 2025</span>
+                         <span class="ml-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            3 min read
+                         </span>
+                      </div>
+                  </div>
+              </div>
+  
+              <div class="flex flex-col bg-gray-50 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl group">
+                  <img src="https://placehold.co/400x250/c7d2fe/4f46e5?text=Blog+2&font=raleway" alt="Smart City Transport" class="w-full h-48 object-cover">
+                  <div class="p-6 flex flex-col flex-grow">
+                      <p class="text-sm font-semibold text-indigo-600">Technology</p>
+                      <h3 class="text-xl font-bold text-gray-900 mt-2 mb-3 group-hover:text-indigo-700 transition duration-200 flex-grow">Integrating Karzo with Smart City Transportation</h3>
+                      <p class="text-sm text-gray-600 mb-4 line-clamp-3">Learn how ridesharing platforms like Karzo are becoming integral parts of intelligent transportation systems, reducing congestion and promoting sustainability.</p>
+                       <div class="flex items-center text-xs text-gray-500 mt-auto pt-4 border-t border-gray-200">
+                         <img src="https://randomuser.me/api/portraits/women/33.jpg" alt="Author" class="w-6 h-6 rounded-full mr-2">
+                         <span>Jane Smith</span>
+                          <span class="mx-1">|</span>
+                         <span>March 8, 2025</span>
+                         <span class="ml-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            4 min read
+                         </span>
+                      </div>
+                  </div>
+              </div>
+  
+               <div class="flex flex-col bg-gray-50 rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-xl group">
+                  <img src="https://placehold.co/400x250/a5b4fc/5b21b6?text=Blog+3&font=raleway" alt="Driver Safety" class="w-full h-48 object-cover">
+                  <div class="p-6 flex flex-col flex-grow">
+                      <p class="text-sm font-semibold text-indigo-600">Driver Resources</p>
+                      <h3 class="text-xl font-bold text-gray-900 mt-2 mb-3 group-hover:text-indigo-700 transition duration-200 flex-grow">Top 5 Safety Tips for Karzo Drivers</h3>
+                      <p class="text-sm text-gray-600 mb-4 line-clamp-3">Your safety is our priority. Review these essential tips for staying safe and secure while driving on the Karzo platform.</p>
+                      <div class="flex items-center text-xs text-gray-500 mt-auto pt-4 border-t border-gray-200">
+                         <img src="https://randomuser.me/api/portraits/men/34.jpg" alt="Author" class="w-6 h-6 rounded-full mr-2">
+                         <span>Alex Brown</span>
+                          <span class="mx-1">|</span>
+                         <span>March 5, 2025</span>
+                         <span class="ml-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 inline-block mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            2 min read
+                         </span>
+                      </div>
+                  </div>
+              </div>
+               </div>
+           <div class="text-center mt-12">
+              <button class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-md shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-200 ease-in-out">
+                Visit Our Blog
+              </button>
+          </div>
+        </div>
+      </section>
+  
+      <footer class="bg-gray-900 text-gray-400 py-12 md:py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 mb-8">
+            <div class="col-span-2 lg:col-span-1">
+               <div class="flex items-center gap-3 mb-4">
+                  <img
+                    src="https://placehold.co/40x40/ffffff/6366f1?text=K&font=raleway"
+                    alt="Karzo Logo"
+                    class="h-8 w-8 rounded-md"
+                   />
+                  <span class="text-xl font-bold text-white">Karzo</span>
+               </div>
+               <p class="text-sm mb-4">Connecting riders and drivers seamlessly.</p>
+               <div class="flex space-x-4">
+                  <a href="#" class="hover:text-white transition duration-200"><i class="fab fa-twitter fa-lg"></i></a>
+                  <a href="#" class="hover:text-white transition duration-200"><i class="fab fa-facebook-f fa-lg"></i></a>
+                  <a href="#" class="hover:text-white transition duration-200"><i class="fab fa-linkedin-in fa-lg"></i></a>
+                  <a href="#" class="hover:text-white transition duration-200"><i class="fab fa-instagram fa-lg"></i></a>
+               </div>
+            </div>
+  
+            <div>
+              <h3 class="text-sm font-semibold text-gray-300 tracking-wider uppercase mb-4">Company</h3>
+              <ul class="space-y-2">
+                <li><a href="#about" class="hover:text-white transition duration-200 text-sm">About Us</a></li>
+                <li><a href="#careers" class="hover:text-white transition duration-200 text-sm">Careers</a></li>
+                <li><a href="#blogs" class="hover:text-white transition duration-200 text-sm">Blog</a></li>
+                <li><a href="#press" class="hover:text-white transition duration-200 text-sm">Press</a></li>
+              </ul>
+            </div>
+  
+            <div>
+              <h3 class="text-sm font-semibold text-gray-300 tracking-wider uppercase mb-4">Product</h3>
+              <ul class="space-y-2">
+                <li><a href="#ride" class="hover:text-white transition duration-200 text-sm">Ride</a></li>
+                <li><a href="#drive" class="hover:text-white transition duration-200 text-sm">Drive</a></li>
+                <li><a href="#safety" class="hover:text-white transition duration-200 text-sm">Safety</a></li>
+                <li><a href="#events" class="hover:text-white transition duration-200 text-sm">Events</a></li>
+              </ul>
+            </div>
+  
+            <div>
+              <h3 class="text-sm font-semibold text-gray-300 tracking-wider uppercase mb-4">Resources</h3>
+              <ul class="space-y-2">
+                <li><a href="#help" class="hover:text-white transition duration-200 text-sm">Help Center</a></li>
+                <li><a href="#cities" class="hover:text-white transition duration-200 text-sm">Cities</a></li>
+                <li><a href="#fare-estimate" class="hover:text-white transition duration-200 text-sm">Fare Estimator</a></li>
+              </ul>
+            </div>
+  
+             <div>
+              <h3 class="text-sm font-semibold text-gray-300 tracking-wider uppercase mb-4">Legal</h3>
+              <ul class="space-y-2">
+                <li><a href="#privacy" class="hover:text-white transition duration-200 text-sm">Privacy Policy</a></li>
+                <li><a href="#terms" class="hover:text-white transition duration-200 text-sm">Terms & Conditions</a></li>
+                <li><a href="#accessibility" class="hover:text-white transition duration-200 text-sm">Accessibility</a></li>
+              </ul>
+            </div>
+  
+          </div>
+  
+          <div class="border-t border-gray-700 pt-8 text-center text-sm">
+            &copy; {{ new Date().getFullYear() }} Karzo Technologies Inc. All rights reserved. Website by Yash Patkar.
+          </div>
+        </div>
+      </footer>
+  
     </div>
-</template>
-
+  </template>
+  
 <style>
 @keyframes scroll {
     from {
@@ -488,4 +392,17 @@ import { RouterLink } from 'vue-router';
     width: max-content;
     animation: scroll 15s linear infinite;
 }
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 </style>

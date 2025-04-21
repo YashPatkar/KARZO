@@ -12,7 +12,7 @@ export const usePassengerStore = defineStore('passenger', () => {
   const fetchPassengerData = async () => {
     if (!email.value) {
       console.error('Email is not set in store!');
-      router.push({ name: 'PVerifyView' }); // Redirect to verification view if email is not set
+      router.push({ name: 'PVerifyView' });
       return;
     }
 

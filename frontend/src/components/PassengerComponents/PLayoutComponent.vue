@@ -5,11 +5,22 @@ import { ref, defineAsyncComponent, onMounted, computed, nextTick, onBeforeUnmou
 const passengerStore = usePassengerStore();
 onMounted(async () => {
   try {
+    if (!sessionStorage.getItem('passenger_email')) {
+      nextTick(() => {
+        window.location.href = '/';
+      });
+    }
     await passengerStore.fetchPassengerData();
   } catch (error) {
     console.error('Error in onMounted:', error);
   }
+  console.log('ssss', sessionStorage.getItem('passenger_email'));
 });
+
+const logout = () => {
+  sessionStorage.removeItem('passenger_email');
+  window.location.href = '/';
+}
 
 const passenger = computed(() => passengerStore.passenger);
 const drawer = ref(false);
@@ -161,7 +172,7 @@ const items = ref([
             <div class="p-2 hover:bg-gray-100 cursor-pointer flex items-center">
               <i class="fa-solid fa-right-from-bracket w-5 h-5 mr-2 text-gray-700"></i>
               <span>
-                <button @click="sessionStorage.removeItem('passenger_email')" class="text-red-500">Logout</button>
+                <a @click="logout" class="">Logout</a>
               </span>
             
             </div>

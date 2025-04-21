@@ -41,7 +41,7 @@
               <span>📧 {{ event.email }}</span>
             </div>
             <button
-              class="w-full py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg transition duration-200"
+              class="w-full py-2 bg-green-500 hover:bg-green-600 focus:ring-green-500 focus:border-green-500 text-white font-semibold rounded-lg transition duration-200"
               @click="openBookingCard(event)"
             >
               Book a Ride
@@ -422,18 +422,18 @@ const bookRide = async () => {
     vehicle_preference: vehiclePreference.value,
     pickup_location: selectedLocation.value.display_name,
     latitude: selectedLocation.value.lat,
-    longitude: selectedLocation.value.lon
+    longitude: selectedLocation.value.lon,
+    passenger_email: sessionStorage.getItem('passenger_email'),
   }
 
   try {
-    console.log('Booking data:', bookingData)
     const response = await api.post('/api/passenger/book-event/', bookingData)
     if(response.status === 201) {
-      alert('Event submitted successfully!')
+      alert('Event Booked successfully!')
       selectedEvent.value = null
     }
     else{
-      alert('Failed to submit event')
+      alert('Failed to book event. Please try again.')
       selectedEvent.value = null
     }
   } catch (error) {
@@ -469,8 +469,6 @@ const toggleLike = async (eventId) => {
     console.error('Error toggling like:', error);
   }
 };
-
-
 
 // Lifecycle
 onMounted(async () => {

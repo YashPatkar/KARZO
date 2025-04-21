@@ -2,7 +2,6 @@ from datetime import datetime, timedelta, timezone
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator, MaxValueValidator
-
 class DriverRegistrationToken(models.Model):
     """
     Model to store registration tokens for passenger sign-up.
@@ -35,6 +34,7 @@ class DriverUser(models.Model):
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="driver")  # Link to Django's User model
     email = models.EmailField(unique=True)  # Email of the driver
+    is_working = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)  # Timestamp when the driver was registered
 
     def __str__(self):
@@ -56,6 +56,8 @@ class PersonalDetails(models.Model):
     phone_number = models.CharField(max_length=15, default="0000000000")
     address = models.TextField(default="Not provided")
     profile_photo = models.URLField(blank=True, null=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
 
     def __str__(self):
         return f"Personal Details for {self.driver.email}"
@@ -75,3 +77,4 @@ class VehicleDetails(models.Model):
 
     def __str__(self):
         return f"Vehicle: {self.vehicle_number} - {self.driver.email}"
+    

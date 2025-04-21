@@ -4,8 +4,10 @@ from driver.views import (
     check_user,
     driver_register,
     event_submit,
+    get_event_requests_for_driver,
     resend_otp,
     validate_token,
+    toggle_working,
 )
 
 urlpatterns = [
@@ -16,4 +18,6 @@ urlpatterns = [
         path("register/", driver_register, name="register_driver"),
         path("<str:email>/resend-otp/", resend_otp, name="resend_otp"),
         path("submit-event/", event_submit, name="submit-event"),
+        path("toggle-working/", toggle_working, name="toggle-working"),
+        path('event-requests/', get_event_requests_for_driver, name='driver_event_requests'),
 ]

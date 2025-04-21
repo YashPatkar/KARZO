@@ -115,13 +115,14 @@
 import { ref, computed, onMounted } from 'vue';
 import DLayoutComponent from '@/components/DriverComponents/DLayoutComponent.vue';
 import api from '@/api';
+import { useDriverStore } from '@/stores/driverStore.js';
+
 
 const events = ref([]);
 const search = ref('');
 const selectedEvent = ref(null);
 const selectedFromTime = ref('');
 const selectedToTime = ref('');
-const vehicleType = ref('');
 const showPopup = ref(false);
 
 const availableTimes = ['10:00 AM', '11:00 AM', '12:00 PM', '1:00 PM', '2:00 PM', '3:00 PM', '4:00 PM', '5:00 PM'];
@@ -140,30 +141,64 @@ const openApplicationCard = (event) => {
   selectedEvent.value = event;
   selectedFromTime.value = '';
   selectedToTime.value = '';
-  vehicleType.value = '';
 };
 
 const closeModal = () => {
   selectedEvent.value = null;
 };
 
+const getCurrentLocation = async () => {
+  if (!navigator.geolocation) {
+    alert('Geolocation is not supported by your browser');
+    return null;
+  }
+
+  try {
+    const position = await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      });
+    });
+
+    const { latitude, longitude } = position.coords;
+    const address = await reverseGeocode(latitude, longitude);
+
+    return {
+      display_name: address,
+      lat: latitude,
+      lon: longitude
+    };
+  } catch (error) {
+    console.error('Error getting location:', error);
+    alert('Could not get your location. Please try again or enter manually.');
+    return null;
+  }
+};
+
+
 const applyForRide = async () => {
-  if (!selectedFromTime.value || !selectedToTime.value || !vehicleType.value) {
+  console.log('Applying for ride with data:', {
+    event_id: selectedEvent.value.id,
+    from_time: selectedFromTime.value,
+    to_time: selectedToTime.value,
+  });
+  if (!selectedFromTime.value || !selectedToTime.value || !selectedEvent.value) {
     alert('Please fill all required fields.');
     return;
   }
+  const location = await getCurrentLocation();
+  const driver_email = useDriverStore().fetchdriverData().email
+  const bookingData = {
+    event_id: selectedEvent.value.id,
+    location: location,
+    driver_email: driver_email,
+    from_time: selectedFromTime.value,
+    to_time: selectedToTime.value,
+  };
 
-  // const bookingData = {
-  //   event_id: selectedEvent.value.id,
-  //   event_name: selectedEvent.value.event_name,
-  //   date: selectedEvent.value.date,
-  //   time: selectedEvent.value.time,
-  //   location: selectedEvent.value.location,
-  //   driver_email: usedriverStore().fetchdriverData().email,
-  //   from_time: selectedFromTime.value,
-  //   to_time: selectedToTime.value,
-  //   vehicle_type: vehicleType.value
-  // };
+  console.log('Booking data:', bookingData);
 
   // try {
   //   await api.post('/api/driver/book-ride/', bookingData);

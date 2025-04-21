@@ -45,11 +45,6 @@ const DriverRoutes = [
     component: () => import('../views/DriverViews/DRequestView.vue')
   },
   {
-    path: '/DHomeView',
-    name: 'DHomeView',
-    component: () => import('../views/DriverViews/DHomeView.vue')
-  },
-  {
     path: '/DEventUploadView',
     name: 'DEventUploadView',
     component: () => import('../views/DriverViews/DEventUploadView.vue')

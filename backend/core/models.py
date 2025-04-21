@@ -40,3 +40,38 @@ class otpData(models.Model):
     
     def is_expired(self):
         return (timezone.now() - self.created_at).seconds > 300
+    
+class EventRequest(models.Model):
+    PENDING = 'PENDING'
+    CONFIRMED = 'CONFIRMED'
+    CANCELED = 'CANCELED'
+
+    STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (CONFIRMED, 'Confirmed'),
+        (CANCELED, 'Canceled'),
+    ]
+
+    event_id = models.CharField(max_length=255)
+    event_name = models.CharField(max_length=255)  # New field
+    email = models.EmailField()  # New: event owner's email
+    passenger_email = models.EmailField()  # New: passenger email for redundancy
+    passenger_name = models.CharField(max_length=255)  # New: passenger name for redundancy
+
+    passenger = models.ForeignKey(
+        'passenger.PassengerUser',
+        on_delete=models.CASCADE,
+        related_name="event_requests"
+    )
+    driver = models.ForeignKey(
+        'driver.DriverUser',
+        on_delete=models.CASCADE,
+        related_name="event_requests"
+    )
+    pickup_location = models.CharField(max_length=255)
+    distance_km = models.FloatField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=PENDING)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Request {self.event_id} - {self.passenger.email} -> {self.driver.email}"

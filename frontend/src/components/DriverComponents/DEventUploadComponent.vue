@@ -16,28 +16,28 @@ const generatingDescription = ref(false)
 const today = new Date()
 const formattedToday = computed(() => today.toISOString().split('T')[0])
 const formattedMaxDate = computed(() => {
-    let maxDate = new Date()
-    maxDate.setFullYear(today.getFullYear() + 1)
-    return maxDate.toISOString().split('T')[0]
+  let maxDate = new Date()
+  maxDate.setFullYear(today.getFullYear() + 1)
+  return maxDate.toISOString().split('T')[0]
 })
 
 // Define event form state
 const eventForm = ref({
-    name: driverStore.driver?.name || '',
-    email: driverStore.driver?.email || '',
-    event_name: '',
-    date: '',
-    time: '',
-    location: '',
-    description: '',
-    latitude: null,
-    longitude: null,
-    user_type: 'driver',
+  name: driverStore.driver?.name || '',
+  email: driverStore.driver?.email || '',
+  event_name: '',
+  date: '',
+  time: '',
+  location: '',
+  description: '',
+  latitude: null,
+  longitude: null,
+  user_type: 'driver',
 })
 
 // AI Description Generation
 const generateEventDescription = async () => {
-    console.log(eventForm.value)
+  console.log(eventForm.value)
   if (!eventForm.value.event_name || !eventForm.value.date || !eventForm.value.time || !eventForm.value.location) {
     alert('Please enter event name, date, time, and location first.');
     return;
@@ -46,9 +46,9 @@ const generateEventDescription = async () => {
   generatingDescription.value = true;
   try {
     eventForm.value.description = await getGroqChatCompletion(
-      eventForm.value.event_name, 
-      eventForm.value.location, 
-      eventForm.value.date, 
+      eventForm.value.event_name,
+      eventForm.value.location,
+      eventForm.value.date,
       eventForm.value.time
     );
   } catch (error) {
@@ -97,7 +97,7 @@ const initMap = () => {
   if (!mapContainer.value) return
 
   // Set initial view (India center by default)
-  const initialView = eventForm.value.latitude 
+  const initialView = eventForm.value.latitude
     ? [parseFloat(eventForm.value.latitude), parseFloat(eventForm.value.longitude)]
     : [20.5937, 78.9629]
   const zoom = eventForm.value.latitude ? 15 : 5
@@ -116,11 +116,11 @@ const initMap = () => {
   // Handle map clicks
   map.value.on('click', async (e) => {
     const { lat, lng } = e.latlng
-    
+
     // Update marker
     if (marker.value) map.value.removeLayer(marker.value)
     marker.value = L.marker([lat, lng]).addTo(map.value)
-    
+
     // Get address
     try {
       const response = await fetch(
@@ -171,30 +171,30 @@ const confirmLocation = () => {
 const emit = defineEmits(['submit-event'])
 
 const submitEvent = () => {
-    if (!eventForm.value.event_name || !eventForm.value.date || !eventForm.value.time || 
-        !eventForm.value.location || !eventForm.value.description) {
-        alert('Please fill all required fields')
-        return
-    }
+  if (!eventForm.value.event_name || !eventForm.value.date || !eventForm.value.time ||
+    !eventForm.value.location || !eventForm.value.description) {
+    alert('Please fill all required fields')
+    return
+  }
 
-    loading.value = true
-    setTimeout(() => {
-        emit('submit-event', { ...eventForm.value })
-        eventForm.value = {
-            name: driverStore.driver?.name || '',
-            email: driverStore.driver?.email || '',
-            event_name: '',
-            date: '',
-            time: '',
-            location: '',
-            description: '',
-            latitude: null,
-            longitude: null,
-            user_type: 'driver',
-        }
-        locationQuery.value = ''
-        loading.value = false
-    }, 500)
+  loading.value = true
+  setTimeout(() => {
+    emit('submit-event', { ...eventForm.value })
+    eventForm.value = {
+      name: driverStore.driver?.name || '',
+      email: driverStore.driver?.email || '',
+      event_name: '',
+      date: '',
+      time: '',
+      location: '',
+      description: '',
+      latitude: null,
+      longitude: null,
+      user_type: 'driver',
+    }
+    locationQuery.value = ''
+    loading.value = false
+  }, 500)
 }
 
 watch(
@@ -211,147 +211,115 @@ watch(
 </script>
 
 <template>
-    <div class="max-w-2xl mx-auto p-6">
-        <h1 class="text-2xl font-bold mb-4 text-gray-800">Suggest New Event</h1>
-        <div class="bg-white shadow-lg rounded-xl p-6">
-            <form @submit.prevent="submitEvent" class="space-y-4">
-                <!-- Event Name -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Event Name</label>
-                    <input 
-                        v-model="eventForm.event_name"
-                        type="text"
-                        class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        required
-                    />
-                </div>
-
-                <!-- Date and Time -->
-                <div class="flex flex-col md:flex-row gap-4">
-                    <div class="w-full">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                        <input 
-                            v-model="eventForm.date"
-                            type="date"
-                            :min="formattedToday"
-                            :max="formattedMaxDate"
-                            class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            required
-                        />
-                    </div>
-
-                    <div class="w-full">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Time</label>
-                        <input 
-                            v-model="eventForm.time"
-                            type="time"
-                            class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                            required
-                        />
-                    </div>
-                </div>
-
-                <!-- Location Field -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Location (India) *</label>
-                    <div class="relative">
-                        <input 
-                            v-model="locationQuery"
-                            type="text"
-                            @input="debounceFetchLocationSuggestions"
-                            class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none pr-10"
-                            required
-                        />
-                        <button
-                            type="button"
-                            @click="openMapModal"
-                            class="absolute right-2 top-2 text-gray-500 hover:text-blue-500"
-                            title="Pick location on map"
-                        >
-                            <i class="fas fa-map-marker-alt"></i>
-                        </button>
-                    </div>
-                    <ul v-if="locationSuggestions.length" class="mt-1 bg-white border border-gray-300 rounded-lg shadow-md z-10">
-                        <li 
-                            v-for="location in locationSuggestions" 
-                            :key="location.display_name" 
-                            @click="selectLocation(location)" 
-                            class="p-2 cursor-pointer hover:bg-gray-100 border-b last:border-b-0"
-                        >
-                            {{ location.display_name }}
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Description -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Event Description *</label>
-                    <div class="relative">
-                        <textarea 
-                            v-model="eventForm.description"
-                            rows="4"
-                            class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:outline-none pr-10"
-                            required
-                        ></textarea>
-                        <button 
-                            @click="generateEventDescription" 
-                            type="button"
-                            class="absolute bottom-2 right-2 text-black border-[1px] border-black px-2 py-1 rounded-md hover:bg-gradient-to-br from-purple-50 via-pink-100 hover:border-none to-red-50 transition duration-200 transform flex items-center"
-                            :disabled="generatingDescription || loading"
-                        >
-                            <span v-if="generatingDescription">Generating...</span>
-                            <span v-else>Generate</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Submit Button -->
-                <button 
-                    type="submit" 
-                    :disabled="loading"
-                    class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 rounded-lg transition duration-200 flex items-center justify-center"
-                >
-                    <svg v-if="loading" class="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                    </svg>
-                    {{ loading ? 'Submitting...' : 'Submit Event Suggestion' }}
-                </button>
-            </form>
+  <div class="max-w-2xl mx-auto p-6">
+    <h1 class="text-2xl font-bold mb-4 text-gray-800">Suggest New Event</h1>
+    <div class="bg-white shadow-lg rounded-xl p-6">
+      <form @submit.prevent="submitEvent" class="space-y-4">
+        <!-- Event Name -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Event Name</label>
+          <input v-model="eventForm.event_name" type="text"
+            class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            required />
         </div>
 
-        <!-- Map Modal -->
-        <div v-if="showMapModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-lg w-full max-w-3xl max-h-[90vh] flex flex-col">
-                <div class="p-4 border-b flex justify-between items-center">
-                    <h3 class="text-lg font-medium">Select Location</h3>
-                    <button @click="closeMapModal" class="text-gray-500 hover:text-gray-700">
-                        &times;
-                    </button>
-                </div>
-                <div class="p-4 flex-1 min-h-[400px]">
-                    <div ref="mapContainer" class="w-full h-full rounded-md" style="min-height: 400px;"></div>
-                </div>
-                <div class="p-4 border-t">
-                    <div v-if="selectedAddress" class="mb-3 p-2 bg-gray-100 rounded">
-                        <strong>Selected:</strong> {{ selectedAddress }}
-                    </div>
-                    <div class="flex justify-end space-x-2">
-                        <button @click="confirmLocation" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                            Confirm
-                        </button>
-                        <button @click="closeMapModal" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            </div>
+        <!-- Date and Time -->
+        <div class="flex flex-col md:flex-row gap-4">
+          <div class="w-full">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+            <input v-model="eventForm.date" type="date" :min="formattedToday" :max="formattedMaxDate"
+              class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              required />
+          </div>
+
+          <div class="w-full">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+            <input v-model="eventForm.time" type="time"
+              class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              required />
+          </div>
         </div>
+
+        <!-- Location Field -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Location (India) *</label>
+          <div class="relative">
+            <input v-model="locationQuery" type="text" @input="debounceFetchLocationSuggestions"
+              class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none pr-10"
+              required />
+            <button type="button" @click="openMapModal" class="absolute right-2 top-2 text-gray-500 hover:text-blue-500"
+              title="Pick location on map">
+              <i class="fas fa-map-marker-alt"></i>
+            </button>
+          </div>
+          <ul v-if="locationSuggestions.length" class="mt-1 bg-white border border-gray-300 rounded-lg shadow-md z-10">
+            <li v-for="location in locationSuggestions" :key="location.display_name" @click="selectLocation(location)"
+              class="p-2 cursor-pointer hover:bg-gray-100 border-b last:border-b-0">
+              {{ location.display_name }}
+            </li>
+          </ul>
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Event Description *</label>
+          <div class="relative">
+            <textarea v-model="eventForm.description" rows="4"
+              class="w-full border border-gray-300 rounded-lg p-2 focus:ring-2 focus:outline-none pr-10"
+              required></textarea>
+            <button @click="generateEventDescription" type="button" title="Generate Description"
+              class="absolute bottom-4 right-3 text-black border-[1px] border-black px-2 py-2 rounded-xl hover:bg-gray-700 hover:text-white hover:border-white transition duration-200 transform flex items-center"
+              :disabled="generatingDescription || loading">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" :disabled="loading"
+          class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 rounded-lg transition duration-200 flex items-center justify-center">
+          <svg v-if="loading" class="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg"
+            fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+          </svg>
+          {{ loading ? 'Submitting...' : 'Submit Event Suggestion' }}
+        </button>
+      </form>
     </div>
+
+    <!-- Map Modal -->
+    <div v-if="showMapModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-lg w-full max-w-3xl max-h-[90vh] flex flex-col">
+        <div class="p-4 border-b flex justify-between items-center">
+          <h3 class="text-lg font-medium">Select Location</h3>
+          <button @click="closeMapModal" class="text-gray-500 hover:text-gray-700">
+            &times;
+          </button>
+        </div>
+        <div class="p-4 flex-1 min-h-[400px]">
+          <div ref="mapContainer" class="w-full h-full rounded-md" style="min-height: 400px;"></div>
+        </div>
+        <div class="p-4 border-t">
+          <div v-if="selectedAddress" class="mb-3 p-2 bg-gray-100 rounded">
+            <strong>Selected:</strong> {{ selectedAddress }}
+          </div>
+          <div class="flex justify-end space-x-2">
+            <button @click="confirmLocation" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+              Confirm
+            </button>
+            <button @click="closeMapModal" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
 body {
-    background-color: #f7fafc;
+  background-color: #f7fafc;
 }
 </style>

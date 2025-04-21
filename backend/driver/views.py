@@ -5,11 +5,12 @@ from rest_framework.decorators import api_view
 from rest_framework.views import APIView
 from driver.models import PersonalDetails
 from django.contrib.auth.models import User
+from driver.serializers import EventRequestSerializer
 from .models import DriverUser, PersonalDetails, DriverRegistrationToken, VehicleDetails
 from django.core.cache import cache
 import re
 from driver.utils import send_email_driver as se, generate_otp_driver as go, send_email_otp_driver as seotp
-from core.models import otpData
+from core.models import EventRequest, otpData, Event
 from core.serializers import EventSerializer
 
 @api_view(["POST"])
@@ -269,3 +270,88 @@ def validate_token(request):
     except DriverRegistrationToken.DoesNotExist:
         print('Invalid tokennnnnnnn')
         return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(["GET", "POST"])
+def toggle_working(request):
+    """
+    GET: Return current working status
+    POST: Update working status with explicit value
+    """
+    email = request.data.get("email") if request.method == "POST" else request.query_params.get("email")
+
+    if not email:
+        return Response({"error":
+         "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        driver_user = DriverUser.objects.filter(email=email).first()
+        if not driver_user:
+            return Response({"error": "Driver not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        if request.method == "GET":
+            return Response({
+                "working": driver_user.is_working,
+                "message": "Current working status retrieved"
+            }, status=status.HTTP_200_OK)
+
+        elif request.method == "POST":
+            new_status = request.data.get("working")
+            if new_status is None:
+                return Response({"error": "Working status is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+            driver_user.is_working = new_status
+            driver_user.save()
+            
+            return Response({
+                "working": driver_user.is_working,
+                "message": "Working status updated successfully"
+            }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({
+            "error": f"Unexpected error: {str(e)}",
+            "working": driver_user.is_working if 'driver_user' in locals() else None
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET'])
+def get_event_requests_for_driver(request):
+    try:
+        email = request.query_params.get('email')
+        if not email:
+            return Response({"error": "Driver email is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            driver = DriverUser.objects.get(email=email)
+        except DriverUser.DoesNotExist:
+            return Response({"error": "Driver not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Get all PENDING event requests for this driver
+        event_requests = EventRequest.objects.filter(driver=driver, status='PENDING').order_by('-created_at')
+        serializer = EventRequestSerializer(event_requests, many=True)
+        data = serializer.data
+
+        # Collect all unique event_ids
+        event_ids = [item.get("event_id") for item in data]
+        print("Event IDs:", event_ids)
+
+        # Query event details for these event_ids
+        event_map = {
+            str(event.id): {
+                "event_name": event.event_name,
+                "event_location": event.event_location
+            }
+            for event in Event.objects.filter(id__in=event_ids)
+        }
+
+        # Merge event_name and event_location into each item
+        for item in data:
+            event_id = item.get("event_id")
+            if event_id in event_map:
+                item["event_name"] = event_map[event_id]["event_name"]
+                item["event_location"] = event_map[event_id]["event_location"]
+
+        return Response(data, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        print("Error fetching driver event requests:", e)
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

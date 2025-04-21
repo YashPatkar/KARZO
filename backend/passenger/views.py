@@ -14,9 +14,10 @@ from rest_framework.decorators import api_view
 from django.contrib.auth.models import User
 from .models import RegistrationToken, PassengerUser, PersonalDetails
 from .utils import send_email
-from core.models import otpData
+from core.models import Event, EventRequest, otpData
 from core.serializers import EventSerializer
-
+from driver.models import DriverUser
+from geopy.distance import geodesic
 
 @api_view(["POST"])
 def passenger_register(request):
@@ -188,9 +189,16 @@ class check_user(APIView):
                         return Response(
                             status=status.HTTP_302_FOUND,
                         )
-                    return Response(
-                        status=status.HTTP_200_OK
+                    response = Response(status=status.HTTP_200_OK)
+                    response.set_cookie(
+                        key='daily_auth',
+                        value='true',
+                        max_age=86400,  # 1 day
+                        httponly=False,  # allow frontend to access it
+                        samesite='Lax',
+                        secure=False     # change to True if HTTPS
                     )
+                    return response
                 else:
                     return Response(
                         status=status.HTTP_400_BAD_REQUEST,
@@ -243,12 +251,84 @@ def event_submit(request):
         print("Error: ", e)
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
+
+
+# data: {'event_id': '1c32c2eb-4603-4330-aee0-b33ccd52c1cb', 'driver_preference': 'any', 'vehicle_preference': 'regular_bike', 'pickup_location': 'Fishermen Colony, G/N Ward, Zone 2, Mumbai, Maharashtra, 400016, India', 'latitude': 19.04708991834686, 'longitude': 72.84160345252239}
+
 @api_view(['POST'])
 def book_event(request):
     try:
         data = request.data
         print('data:', data)
-        return Response(status=status.HTTP_201_CREATED)
+        if not data:
+            return Response({"error": "No data provided."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        pickup_location = (data.get("latitude"), data.get("longitude"))
+        driver_preference = data.get("driver_preference", "any").lower()
+        active_drivers = DriverUser.objects.filter(is_working=True)
+        print("Active drivers:", active_drivers.count())
+        print("Active drivers:", active_drivers)
+        
+        if driver_preference == "men":
+            active_drivers = active_drivers.filter(personal_details__gender__iexact="male")
+        elif driver_preference == "women":
+            active_drivers = active_drivers.filter(personal_details__gender__iexact="female")
+        
+        passenger = PassengerUser.objects.get(email=data.get("passenger_email"))
+        event = Event.objects.get(id=data.get("event_id"))
+        
+        nearby_drivers = []
+        drivers_sent = 0
+        
+        for driver in active_drivers:
+            print(drivers_sent)
+            if drivers_sent >= 3:
+                break  # stop once 3 drivers have been notified
+            
+            try:
+                print("Driver email:", driver.email)
+                driver_details = driver.personal_details
+                
+                # Ensure the driver's location exists and is valid
+                if driver_details.latitude is None or driver_details.longitude is None:
+                    print(f"Invalid location for driver {driver.email}. Skipping.")
+                    continue
+                
+                driver_location = (driver_details.latitude, driver_details.longitude)
+                distance = geodesic(pickup_location, driver_location).km
+                print("Distance:", distance)
+                
+                if distance <= 5:
+                    # Ensure the passenger is correctly passed in the EventRequest
+                    event_request = EventRequest.objects.create(
+                        event_id=event.id,
+                        event_name=event.event_name,
+                        email=event.email,
+                        passenger_email=passenger.email,
+                        passenger_name=passenger.personal_details.full_name,
+                        driver=driver,
+                        pickup_location=data.get("pickup_location"),
+                        distance_km=round(distance, 2),
+                        passenger=passenger  # Ensure this is added
+                    )
+                    
+                    nearby_drivers.append({
+                        "driver_email": driver.email,
+                        "distance_km": round(distance, 2)
+                    })
+                    drivers_sent += 1
+            except Exception as inner_e:
+                print("Driver location missing or invalid:", inner_e)
+                continue
+        
+        if nearby_drivers:
+            return Response({
+                "message": f"Requests sent to {drivers_sent} nearby drivers.",
+                "drivers": nearby_drivers
+            }, status=status.HTTP_201_CREATED)
+        
+        return Response({"message": "No suitable driver found nearby."}, status=status.HTTP_404_NOT_FOUND)
+    
     except Exception as e:
-        print("Error: ", e)
-        return Response(status=status.HTTP_304_NOT_MODIFIED)
+        print("Error:", e)
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
