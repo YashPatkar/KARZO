@@ -13,7 +13,7 @@ import { RouterLink } from 'vue-router';
                 alt="Karzo Logo"
                 class="h-10 w-10 rounded-lg"
               />
-              <span class="text-2xl font-bold text-gray-900">Karzo</span>
+                <span class="hidden sm:block text-2xl font-bold text-gray-900">Karzo</span>
             </div>
   
             <div class="hidden md:flex items-center gap-8 text-base font-medium text-gray-600">
@@ -30,7 +30,7 @@ import { RouterLink } from 'vue-router';
               </RouterLink>
               <RouterLink :to="{ name: 'PRegisterView' }">
                 <button class="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 transition duration-200 ease-in-out shadow-sm">
-                  Passenger Sign Up
+                  Passenger Portal
                 </button>
               </RouterLink>
               </div>
@@ -43,7 +43,7 @@ import { RouterLink } from 'vue-router';
         <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div class="text-center lg:text-left">
             <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
-              Seamless Rides, <br class="hidden sm:inline" /> Unforgettable <span class="bg-gradient-to-br from-[#0C0C0C] via-[#0C0C0C] to-[#4834D4] text-transparent bg-clip-text">Events</span>.
+              Seamless Rides, <br class="hidden sm:inline" /> Unforgettable <span class="bg-gradient-to-br from-[#0C0C0C] via-[#120d32] to-[#4834D4] text-transparent bg-clip-text">Events</span>.
             </h1>
             <p class="text-lg text-gray-600 mb-8 max-w-xl mx-auto lg:mx-0">
               Connect with drivers for instant rides or event transport. Join Karzo for reliable, fast, and safe journeys across the city.

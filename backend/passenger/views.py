@@ -3,21 +3,18 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view  # type: ignore
 from rest_framework.views import APIView
 import re
-from .utils import send_email
 from .models import RegistrationToken
 from django.contrib.auth.models import User
 from .models import PassengerUser
-from .utils import generate_otp, send_email_otp
+from .utils import generate_otp, send_email_otp, send_email
 from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from django.contrib.auth.models import User
 from .models import RegistrationToken, PassengerUser, PersonalDetails
-from .utils import send_email
 from core.models import Event, EventRequest, otpData
 from core.serializers import EventSerializer
 from driver.models import DriverUser
 from geopy.distance import geodesic
+from django.core.cache import cache
+from driver.utils import generate_otp_driver as go, send_email_otp_driver as seotp
 
 @api_view(["POST"])
 def passenger_register(request):
@@ -89,6 +86,32 @@ def passenger_register(request):
             {"error": f"An unexpected error occurred: {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
+@api_view(['POST'])
+def resend_otp(request, email):
+    """API endpoint to resend OTP to the user"""
+    try:
+        email = str(email).lower()
+        passenger = PassengerUser.objects.filter(email=email).first() 
+
+        if not passenger:
+            return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        new_otp = go()
+        print("New OTP: ", new_otp)
+        cache.set(email, new_otp, timeout=300)  # Store OTP for 5 minutes
+        print("Cached OTP: ", cache.get(email))
+        print("Email: ", email)
+        email_response = seotp(email, new_otp)
+        print("Email responsee: ", email_response)
+
+        if email_response == 1:
+            return Response({"message": "OTP resent successfully"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"message": "Failed to send OTP"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    except Exception as e:
+        return Response({"error": f"An unexpected error occurred: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(["POST"])
 def validate_token(request):
@@ -332,3 +355,56 @@ def book_event(request):
     except Exception as e:
         print("Error:", e)
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PassengerProfile(APIView):
+    def get(self, request):
+        try:
+            passenger_email = request.query_params.get("email")  # Changed from request.data to query_params
+            if not passenger_email:
+                return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            passenger = PassengerUser.objects.filter(email=passenger_email).first()
+            if not passenger:
+                return Response({"error": "Driver not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            # Construct custom response
+            personal = getattr(passenger, 'personal_details', None)
+            response_data = {
+                "email": passenger.email,
+                "name": personal.full_name if personal else "",
+                "phone": personal.phone_number if personal else "",
+                "address": personal.address if personal else "",
+                "profile_photo": personal.profile_photo if personal else ""
+            }
+
+            return Response({"data": response_data}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print("Error:", str(e))
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def put(self, request):
+        try:
+            passenger_email = request.data.get("email")
+            if not passenger_email:
+                return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+            passenger = PassengerUser.objects.filter(email=passenger_email).first()
+            if not passenger:
+                return Response({"error": "Passenger not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            # Update personal details
+            personal_details = passenger.personal_details
+            if personal_details:
+                personal_details.full_name = request.data.get("name", personal_details.full_name)
+                print("Full name:", personal_details.full_name)
+                personal_details.profile_photo = request.data.get("profile_photo", personal_details.profile_photo)
+                print("Profile photo:", personal_details.profile_photo)
+                personal_details.save()
+                print("Personal details saved successfully")
+
+            return Response({"message": "Profile updated successfully"}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print("Error:", str(e))
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

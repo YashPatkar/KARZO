@@ -274,10 +274,14 @@ const toggleWorking = async () => {
           <!-- Dropdown Menu -->
           <div v-if="showDropdown"
             class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded shadow-lg dropdown-menu">
+            <router-link :to="{ name: 'DProfileView' }" class="block">
             <div class="p-2 hover:bg-gray-100 cursor-pointer flex items-center">
               <i class="fa-solid fa-user w-5 h-5 mr-2 text-gray-700"></i>
-              <span>Profile</span>
+              <span>
+                Profile
+              </span>
             </div>
+          </router-link>
             <div class="p-2 hover:bg-gray-100 cursor-pointer flex items-center">
               <i class="fa-solid fa-right-from-bracket w-5 h-5 mr-2 text-gray-700"></i>
               <span>

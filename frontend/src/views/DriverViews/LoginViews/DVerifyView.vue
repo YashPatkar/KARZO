@@ -93,7 +93,7 @@ const resendOtp = async () => {
   errorMessage.value = '';
 
   try {
-    const response = await api.post(`/api/driver/resend-otp/`);
+    const response = await api.post(`/api/driver/resend-otp/${email.value}/`);
 
     if (response.status === 200) {
       errorMessage.value = 'OTP has been resent. Please check your email.';

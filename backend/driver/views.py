@@ -220,9 +220,12 @@ def resend_otp(request, email):
             return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
         new_otp = go()
+        print("New OTP: ", new_otp)
         cache.set(email, new_otp, timeout=300)  # Store OTP for 5 minutes
-
-        email_response = se(email, new_otp)
+        print("Cached OTP: ", cache.get(email))
+        print("Email: ", email)
+        email_response = seotp(email, new_otp)
+        print("Email responsee: ", email_response)
 
         if email_response == 1:
             return Response({"message": "OTP resent successfully"}, status=status.HTTP_200_OK)
@@ -338,7 +341,7 @@ def get_event_requests_for_driver(request):
         event_map = {
             str(event.id): {
                 "event_name": event.event_name,
-                "event_location": event.event_location
+                "event_location": event.location,
             }
             for event in Event.objects.filter(id__in=event_ids)
         }
@@ -355,3 +358,81 @@ def get_event_requests_for_driver(request):
     except Exception as e:
         print("Error fetching driver event requests:", e)
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+class ApproveRequestView(APIView):
+    def post(self, request):
+        try:
+            data = request.data
+            print('Received data:', data)
+            
+            event_uuid = data.get("event_id")
+            if not event_uuid:
+                return Response({"error": "event_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            event = get_object_or_404(EventRequest, event_id=event_uuid)
+            print('Found event:', event)
+                        
+            return Response({
+                "message": "Event request approved",
+                "event": {
+                    "event_id": event.event_id,
+                    "passenger_name": event.passenger_name,
+                    "pickup_location": event.pickup_location,
+                    "event_name": event.event_name,
+                    "status": event.status
+                }
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            print('Error:', str(e))
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+class DriverProfile(APIView):
+    def get(self, request):
+        try:
+            driver_email = request.query_params.get("email")  # Changed from request.data to query_params
+            if not driver_email:
+                return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            driver = DriverUser.objects.filter(email=driver_email).first()
+            if not driver:
+                return Response({"error": "Driver not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            # Construct custom response
+            personal = getattr(driver, 'personal_details', None)
+            response_data = {
+                "email": driver.email,
+                "name": personal.full_name if personal else "",
+                "phone": personal.phone_number if personal else "",
+                "address": personal.address if personal else "",
+                "profile_photo": personal.profile_photo if personal else ""
+            }
+
+            return Response({"data": response_data}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print("Error:", str(e))
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def put(self, request):
+        try:
+            driver_email = request.data.get("email")
+            if not driver_email:
+                return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+            driver = DriverUser.objects.filter(email=driver_email).first()
+            if not driver:
+                return Response({"error": "Driver not found"}, status=status.HTTP_404_NOT_FOUND)
+
+            # Update personal details
+            personal_details = driver.personal_details
+            if personal_details:
+                personal_details.full_name = request.data.get("name", personal_details.full_name)
+                personal_details.profile_photo = request.data.get("profile_photo", personal_details.profile_photo)
+                personal_details.save()
+
+            return Response({"message": "Profile updated successfully"}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print("Error:", str(e))
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

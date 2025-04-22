@@ -45,9 +45,7 @@
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '@/api';
-import { usePassengerStore } from '@/stores/passengerStore';
 
-const passengerStore = usePassengerStore();
 const otp = ref('');
 const isLoading = ref(false);
 const isResending = ref(false);
@@ -93,10 +91,10 @@ const resendOtp = async () => {
   errorMessage.value = '';
 
   try {
-    const response = await api.post(`/api/passenger/resend-otp/`);
+    const response = await api.post(`/api/passenger/resend-otp/${email.value}/`);
 
     if (response.status === 200) {
-      errorMessage.value = 'OTP has been resent. Please check your email.';
+      alert('OTP has been resent. Please check your email.');
       startCooldown();
     } else {
       errorMessage.value = 'Failed to resend OTP. Please try again later.';

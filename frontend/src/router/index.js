@@ -35,6 +35,11 @@ const PassengerRoutes = [
     path: '/PHistoryView',
     name: 'PHistoryView',
     component: () => import('../views/PassengerViews/PHistoryView.vue')
+  },
+  {
+    path: '/PProfileView',
+    name: 'PProfileView',
+    component: () => import('../views/PassengerViews/PProfileView.vue')
   }
 ]
 
@@ -83,6 +88,11 @@ const DriverRoutes = [
     path: '/DHistoryView',
     name: 'DHistoryView',
     component: () => import('../views/DriverViews/DHistoryView.vue')
+  },
+  {
+    path: '/DProfileView',
+    name: 'DProfileView',
+    component: () => import('../views/DriverViews/DProfileView.vue')
   }
 ]
 
