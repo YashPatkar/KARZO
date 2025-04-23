@@ -3,10 +3,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from driver.models import PersonalDetails
 from django.contrib.auth.models import User
 from driver.serializers import EventRequestSerializer
-from .models import DriverUser, PersonalDetails, DriverRegistrationToken, VehicleDetails
+from .models import DriverFeedback, DriverUser, PersonalDetails, DriverRegistrationToken, VehicleDetails
 from django.core.cache import cache
 import re
 from driver.utils import send_email_driver as se, generate_otp_driver as go, send_email_otp_driver as seotp
@@ -436,3 +435,34 @@ class DriverProfile(APIView):
         except Exception as e:
             print("Error:", str(e))
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+@api_view(['POST'])
+def driver_feedback(request):
+    """
+    API endpoint to submit driver feedback.
+    """
+    try:
+        data = request.data
+        driver_email = data.get("email")
+        feedback_text = data.get("message")
+        print(data)
+        if not driver_email or not feedback_text:
+            return Response({"error": "Email and feedback are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # ✅ Get driver object
+        driver = DriverUser.objects.filter(email=driver_email).first()
+        print('driver:', driver)
+        if not driver:
+            return Response({"error": "driver not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # ✅ Create feedback object
+        DriverFeedback.objects.create(
+            driver=driver,
+            feedback_text=feedback_text
+        )
+        print(DriverFeedback)
+
+        return Response({"message": "Feedback submitted successfully"}, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

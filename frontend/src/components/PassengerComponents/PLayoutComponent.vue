@@ -87,11 +87,23 @@ const items = ref([
     component: defineAsyncComponent(() => import('@/views/PassengerViews/PEventUploadView.vue'))
   },
   {
+    title: 'Request List',
+    icon: 'fa-solid fa-list',
+    to: { name: 'PRequestListView' },
+    component: defineAsyncComponent(() => import('@/views/PassengerViews/PRequestListView.vue'))
+  },
+  {
     title: 'History',
     icon: 'fa-solid fa-clock-rotate-left',
     to: { name: 'PHistoryView' },
     component: defineAsyncComponent(() => import('@/views/PassengerViews/PHistoryView.vue'))
-  }
+  },
+  {
+    title: 'Feedback',
+    icon: 'fa-solid fa-comment-dots',
+    to: { name: 'PFeedbackView' },
+    component: defineAsyncComponent(() => import('@/views/PassengerViews/PFeedbackView.vue'))
+  },
 ]);
 </script>
 

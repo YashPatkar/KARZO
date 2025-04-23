@@ -126,6 +126,14 @@ const items = ref([
       import("@/views/DriverViews/DHistoryView.vue")
     ),
   },
+  {
+    title: "Feedback",
+    icon: "fa-solid fa-comment",
+    to: { name: "DFeedbackView" },
+    component: defineAsyncComponent(() =>
+      import("@/views/DriverViews/DFeedbackView.vue")
+    ),
+  }
 ]);
 
 const isWorking = ref(

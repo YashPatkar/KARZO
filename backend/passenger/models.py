@@ -60,3 +60,15 @@ class PersonalDetails(models.Model):
 
     def __str__(self):
         return f"Personal Details for {self.passenger.email}"
+    
+class PassengerFeedback(models.Model):
+    """
+    Model to store feedback from passengers.
+    """
+    passenger = models.ForeignKey(PassengerUser, on_delete=models.CASCADE, related_name="feedback")  # Link to PassengerUser
+    feedback_text = models.TextField()  # Feedback text from the passenger
+    created_at = models.DateTimeField(auto_now_add=True)  # Timestamp when the feedback was submitted
+
+    def __str__(self):
+        return f"Feedback from {self.passenger.email} on {self.created_at}"
+    

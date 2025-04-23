@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view  # type: ignore
 from rest_framework.views import APIView
 import re
-from .models import RegistrationToken
+from .models import PassengerFeedback, RegistrationToken
 from django.contrib.auth.models import User
 from .models import PassengerUser
 from .utils import generate_otp, send_email_otp, send_email
@@ -408,3 +408,69 @@ class PassengerProfile(APIView):
         except Exception as e:
             print("Error:", str(e))
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+@api_view(['POST'])
+def passenger_feedback(request):
+    """
+    API endpoint to submit passenger feedback.
+    """
+    try:
+        data = request.data
+        passenger_email = data.get("email")
+        feedback_text = data.get("message")
+
+        if not passenger_email or not feedback_text:
+            return Response({"error": "Email and feedback are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # ✅ Get passenger object
+        passenger = PassengerUser.objects.filter(email=passenger_email).first()
+        if not passenger:
+            return Response({"error": "Passenger not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # ✅ Create feedback object
+        PassengerFeedback.objects.create(
+            passenger=passenger,
+            feedback_text=feedback_text
+        )
+
+        return Response({"message": "Feedback submitted successfully"}, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+@api_view(['GET'])
+def get_event_bookings(request):
+    email = request.GET.get('email')
+    if not email:
+        return Response({"error": "Passenger email is required."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    passenger = PassengerUser.objects.filter(email=email).first()
+    if not passenger:
+        return Response({"error": "Passenger not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    bookings = EventRequest.objects.filter(passenger=passenger).order_by('-id')
+    data = [
+        {
+            "id": booking.id,
+            "event_name": booking.event_name,
+            "pickup_location": booking.pickup_location,
+            "driver_email": booking.driver.email if booking.driver else None,
+            "distance_km": booking.distance_km,
+        }
+        for booking in bookings
+    ]
+    return Response({"bookings": data}, status=status.HTTP_200_OK)
+
+
+@api_view(['DELETE'])
+def cancel_event_booking(request, request_id):
+    try:
+        booking = EventRequest.objects.filter(id=request_id).first()
+        if not booking:
+            return Response({"error": "Booking not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        booking.delete()
+        return Response({"message": "Booking cancelled successfully."}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

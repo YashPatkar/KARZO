@@ -40,6 +40,16 @@ const PassengerRoutes = [
     path: '/PProfileView',
     name: 'PProfileView',
     component: () => import('../views/PassengerViews/PProfileView.vue')
+  },
+  {
+    path: '/PFeedbackView',
+    name: 'PFeedbackView',
+    component: () => import('../views/PassengerViews/PFeedbackView.vue')
+  },
+  {
+    path: "/PRequestListView",
+    name: "PRequestListView",
+    component: () => import('../views/PassengerViews/PRequestListView.vue')
   }
 ]
 
@@ -93,6 +103,11 @@ const DriverRoutes = [
     path: '/DProfileView',
     name: 'DProfileView',
     component: () => import('../views/DriverViews/DProfileView.vue')
+  },
+  {
+    path: '/DFeedbackView',
+    name: 'DFeedbackView',
+    component: () => import('../views/DriverViews/DFeedbackView.vue')
   }
 ]
 

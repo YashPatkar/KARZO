@@ -78,3 +78,15 @@ class VehicleDetails(models.Model):
     def __str__(self):
         return f"Vehicle: {self.vehicle_number} - {self.driver.email}"
     
+
+class DriverFeedback(models.Model):
+    """
+    Model to store feedback from drivers.
+    """
+    driver = models.ForeignKey(DriverUser, on_delete=models.CASCADE, related_name="feedback")  # Link to DriverUser
+    feedback_text = models.TextField()  # Feedback text from the driver
+    created_at = models.DateTimeField(auto_now_add=True)  # Timestamp when the feedback was submitted
+
+    def __str__(self):
+        return f"Feedback from {self.driver.email} on {self.created_at}"
+    

@@ -4,6 +4,7 @@ from driver.views import (
     DriverProfile,
     check_otp,
     check_user,
+    driver_feedback,
     driver_register,
     event_submit,
     get_event_requests_for_driver,
@@ -24,4 +25,5 @@ urlpatterns = [
         path('event-requests/', get_event_requests_for_driver, name='driver_event_requests'),
         path('approve-request/', ApproveRequestView.as_view(), name='approve_request'),
         path('driver-profile/', DriverProfile.as_view(), name='driver_profile'),
+        path('feedback/', driver_feedback, name='driver_feedback'),
 ]
