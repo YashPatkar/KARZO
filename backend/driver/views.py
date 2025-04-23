@@ -11,6 +11,7 @@ import re
 from driver.utils import send_email_driver as se, generate_otp_driver as go, send_email_otp_driver as seotp
 from core.models import EventRequest, otpData, Event
 from core.serializers import EventSerializer
+from passenger.utils import is_email_valid
 
 @api_view(["POST"])
 def driver_register(request):
@@ -21,6 +22,11 @@ def driver_register(request):
     email = data.get("email")
     token = data.get("token")
     profile_photo_url = data.get("profile_photo")  # Get the profile photo URL
+    if not is_email_valid(email):
+        return Response(
+            {"error": "Invalid email format"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     print('data:', data)
     print("Email:", email)
     print("Token:", token)

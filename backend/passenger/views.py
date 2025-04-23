@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view  # type: ignore
 from rest_framework.views import APIView
 import re
+
+from test import is_email_valid
 from .models import PassengerFeedback, RegistrationToken
 from django.contrib.auth.models import User
 from .models import PassengerUser
@@ -25,6 +27,11 @@ def passenger_register(request):
     email = data.get("email")
     token = data.get("token")
     profile_photo_url = data.get("profile_photo")  # Get the profile photo URL
+    if not is_email_valid(email):
+        return Response(
+            {"error": "Invalid email format"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
     print(data)
     print("Email:", email)
     print("Token:", token)

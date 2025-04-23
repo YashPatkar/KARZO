@@ -1,9 +1,25 @@
 from django.conf import settings
 from django.core.mail import send_mail
 import uuid
+
+import requests
 from .models import RegistrationToken
 from random import randint
 
+def is_email_valid(email):
+    try:
+        url = "https://emailvalidation.abstractapi.com/v1/"
+        params = {
+            "api_key": settings.ABSTRACTAPI_EMAIL_VERIFICATION_KEY,
+            "email": email
+        }
+        response = requests.get(url, params=params)
+        data = response.json()
+
+        return data.get("is_valid_format", {}).get("value", False) and data.get("is_smtp_valid", False)
+    except Exception as e:
+        return False
+    
 def generate_otp():
     return randint(100000, 999999)
 
